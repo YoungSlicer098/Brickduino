@@ -1,28 +1,592 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coding Blocks</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <link rel="icon" type="image/png" href="img/brick_logo.png">
+
+    <!-- Style -->
+    <link rel="stylesheet" type="text/css" href="style/style_blockly.css">
+
 </head>
+
 <body>
-        
+    <div class="app-container">
+        <!-- Left Category Sidebar -->
+        <div class="sidebar-left">
+            <div class="category-item" onclick="setActiveCategory(this); showBlocks('Setup');">
+                <div class="category-dot" style="background-color: #996f21;"></div>
+                <div class="category-label">Setup &<br>Configurations</div>
+            </div>
+            <div class="category-item" onclick="setActiveCategory(this); showBlocks('LED');">
+                <div class="category-dot" style="background-color: #3d9921;"></div>
+                <div class="category-label">LED</div>
+            </div>
+            <div class="category-item" onclick="setActiveCategory(this); showBlocks('Wait');">
+                <div class="category-dot" style="background-color: #259e58;"></div>
+                <div class="category-label">Wait</div>
+            </div>
+            <div class="category-item" onclick="setActiveCategory(this); showBlocks('Loops');">
+                <div class="category-dot" style="background-color: #2894a7;"></div>
+                <div class="category-label">Loops</div>
+            </div>
+            <div class="category-item" onclick="setActiveCategory(this); showBlocks('Variable');">
+                <div class="category-dot" style="background-color: #224299;"></div>
+                <div class="category-label">Variable <br>& Value</div>
+            </div>
+            <div class="category-item" onclick="setActiveCategory(this); showBlocks('Math');">
+                <div class="category-dot" style="background-color: #52249c;"></div>
+                <div class="category-label">Math</div>
+            </div>
+            <div class="category-item" onclick="setActiveCategory(this); showBlocks('Logic');">
+                <div class="category-dot" style="background-color: #88249c;"></div>
+                <div class="category-label">Logic</div>
+            </div>
+            <div class="category-item" onclick="setActiveCategory(this); showBlocks('Control');">
+                <div class="category-dot" style="background-color: #9c2448;"></div>
+                <div class="category-label">Control/<br>Condition</div>
+            </div>
+            <div class="category-item" onclick="setActiveCategory(this); showBlocks('Function');">
+                <div class="category-dot" style="background-color: #9c2424;"></div>
+                <div class="category-label">Function</div>
+            </div>
+        </div>
+
+
+        <button id="closeFlyoutButton" onclick="hideFlyout()" style="display:none;">X</button>
+
+        <div id="blocklyDiv" style="height: 100%; width: 100%;"></div>
+
+
+        <!-- Generate Code Button -->
+        <button class="generate-button" onclick="toggleCode()">🡒</button>
+        <!-- Hoverable right edge to toggle code sidebar -->
+        <div class="hover-toggle" onclick="toggleCode()"></div>
+
+        <!-- Code Sidebar -->
+        <div class="code-sidebar" id="codeSidebar">
+            <button class="close-button" onclick="toggleCode()">✕</button>
+            <button class="generate-button" onclick="toggleCode()">🡒</button>
+            <h3 style="margin-left: 10px;">Generated Code</h3>
+            <pre class="code-box" id="codeOutput">// Your code will appear here</pre>
+        </div>
+    </div>
+
+    <!-- Blockly Script -->
+    <script type="text/javascript" src="https://unpkg.com/blockly/blockly.min.js"></script>
+
+    <script type="text/javascript">
+        Blockly.Arduino = new Blockly.Generator('Arduino');
+
+        Blockly.Arduino = Blockly.Arduino || {};
+    </script>
+
+    <!-- Arduino -->
+    <script type="text/javascript" src="generators/arduino.js"></script>
+
+
+    <!-- Block Definitions -->
+    <script type="text/javascript" src="blocks/custom_blocks.js"></script>
+
+
+    <!-- Arduino Generators -->
+    <script type="text/javascript" src="generators/arduino_generator.js"></script>
+
+    <!-- Main Script -->
+    <script type="text/javascript" src="../script.js"></script>
+
+    <!-- Workspace Script -->
+    <script type="text/javascript">
+        // Inject Blockly into #blocklyDiv
+        const workspace = Blockly.inject('blocklyDiv', {
+            toolbox: '<xml></xml>',
+            trashcan: true,
+            zoom: {
+                controls: true,
+                wheel: true,
+                startScale: 1.0,
+                maxScale: 2,
+                minScale: 0.3,
+                scaleSpeed: 1.2
+            },
+            move: {
+                scrollbars: true,
+                drag: true,
+                wheel: true
+            },
+            renderer: 'zelos', // Optional: looks more modern
+            grid: {
+                spacing: 20,
+                length: 3,
+                colour: '#ccc',
+                snap: true
+            }
+        });
+
+
+        function toggleCode(forceClose = false) {
+            const sidebar = document.getElementById('codeSidebar');
+            const isOpen = sidebar.classList.contains('open');
+            const Arduino = Blockly.Arduino
+
+
+            console.log("Is generator for 'setup_block' defined?", typeof Arduino['setup_block']);
+
+            console.log("Calling Arduino generator...");
+            console.log(Blockly.Arduino.workspaceToCode);
+
+            if (isOpen || forceClose) {
+                sidebar.classList.remove('open');
+            } else {
+                sidebar.classList.add('open');
+
+                try {
+                    // Generate Arduino code from workspace
+                    Arduino.init(workspace);
+                    const generatedCode = Arduino.workspaceToCode(workspace);
+                    console.log(generatedCode)
+                    document.getElementById('codeOutput').innerText = generatedCode || '// No code generated yet.';
+                } catch (error) {
+                    console.error('Code generation error:', error);
+                    document.getElementById('codeOutput').innerText = '// Error generating code.';
+                }
+            }
+        };
+
+
+
+        // Auto load start up
+        window.addEventListener('load', () => {
+
+            const setupBlock = workspace.newBlock('setup_block');
+            setupBlock.initSvg();
+            setupBlock.render();
+            setupBlock.moveBy(20, 40);
+            setupBlock.setDeletable(false);
+
+            const loopBlock = workspace.newBlock('loop_block');
+            loopBlock.initSvg();
+            loopBlock.render();
+            loopBlock.moveBy(20, 200);
+            loopBlock.setDeletable(false);
+
+            console.log('Registered Arduino blocks:', Object.keys(Blockly.Arduino));
+        });
+
+
+
+        workspace.addChangeListener(function (event) {
+            if (event.type !== Blockly.Events.BLOCK_CREATE) return;
+
+            const blocks = workspace.getAllBlocks(false);
+
+            // Check for multiple loop blocks
+            const loops = blocks.filter(b => b.type === 'loop_block');
+            if (loops.length > 1) {
+                alert('Only one loop block is allowed!');
+                workspace.removeBlockById(event.blockId);
+                return;
+            }
+
+            // Check for multiple setup blocks
+            const setups = blocks.filter(b => b.type === 'setup_block');
+            if (setups.length > 1) {
+                alert('Only one setup block is allowed!');
+                workspace.removeBlockById(event.blockId);
+                return;
+            }
+        });
+
+        workspace.clear();
+
+        // Function to create blocks manually
+        function showBlocks(category) {
+            const xmlList = [];
+
+            if (category == 'Setup') {
+                const block1 = Blockly.utils.xml.createElement('block');
+                block1.setAttribute('type', 'set_pin_mode');
+                xmlList.push(block1);
+
+                const block2 = Blockly.utils.xml.createElement('block');
+                block2.setAttribute('type', 'digital_write');
+                xmlList.push(block2);
+
+                const block3 = Blockly.utils.xml.createElement('block');
+                block3.setAttribute('type', 'digital_read');
+                xmlList.push(block3);
+
+                const block4 = Blockly.utils.xml.createElement('block');
+                block4.setAttribute('type', 'analog_read');
+                xmlList.push(block4);
+
+                const block5 = Blockly.utils.xml.createElement('block');
+                block5.setAttribute('type', 'analog_write');
+                xmlList.push(block5);
+
+                const block6 = Blockly.utils.xml.createElement('block');
+                block6.setAttribute('type', 'pin_dropdown');
+                xmlList.push(block6);
+
+                const block7 = Blockly.utils.xml.createElement('block');
+                block7.setAttribute('type', 'pin_analog_dropdown');
+                xmlList.push(block7);
+            }
+            else if (category == 'LED') {
+                const block1 = Blockly.utils.xml.createElement('block');
+                block1.setAttribute('type', 'turn_led_on');
+                xmlList.push(block1);
+
+                const block2 = Blockly.utils.xml.createElement('block');
+                block2.setAttribute('type', 'turn_led_off');
+                xmlList.push(block2);
+
+                const block3 = Blockly.utils.xml.createElement('block');
+                block3.setAttribute('type', 'custom_led');
+                xmlList.push(block3);
+
+                const block4 = Blockly.utils.xml.createElement('block');
+                block4.setAttribute('type', 'blink_led');
+                xmlList.push(block4);
+
+                const block5 = Blockly.utils.xml.createElement('block');
+                block5.setAttribute('type', 'fade_led');
+                xmlList.push(block5);
+            }
+            else if (category == 'Wait') {
+
+                const block1 = Blockly.utils.xml.createElement('block');
+                block1.setAttribute('type', 'delay_ms');
+                xmlList.push(block1);
+
+                const block2 = Blockly.utils.xml.createElement('block');
+                block2.setAttribute('type', 'delay_seconds');
+                xmlList.push(block2);
+
+                const block3 = Blockly.utils.xml.createElement('block');
+                block3.setAttribute('type', 'delay_variable');
+                xmlList.push(block3);
+
+            }
+            else if (category == 'Loops') {
+                const block1 = Blockly.utils.xml.createElement('block');
+                block1.setAttribute('type', 'repeat_times');
+                xmlList.push(block1);
+
+                const block2 = Blockly.utils.xml.createElement('block');
+                block2.setAttribute('type', 'while_true_loop');
+                xmlList.push(block2);
+
+                const block3 = Blockly.utils.xml.createElement('block');
+                block3.setAttribute('type', 'repeat_until');
+                xmlList.push(block3);
+
+                const block4 = Blockly.utils.xml.createElement('block');
+                block4.setAttribute('type', 'for_loop_variable');
+                xmlList.push(block4);
+
+                const block5 = Blockly.utils.xml.createElement('block');
+                block5.setAttribute('type', 'break_loop');
+                xmlList.push(block5);
+
+                const block6 = Blockly.utils.xml.createElement('block');
+                block6.setAttribute('type', 'continue_loop');
+                xmlList.push(block6);
+            }
+            else if (category == 'Variable') {
+                const block1 = Blockly.utils.xml.createElement('block');
+                block1.setAttribute('type', 'declare_variable');
+                xmlList.push(block1);
+
+                const block2 = Blockly.utils.xml.createElement('block');
+                block2.setAttribute('type', 'set_variable');
+                xmlList.push(block2);
+
+                const block3 = Blockly.utils.xml.createElement('block');
+                block3.setAttribute('type', 'get_variable');
+                xmlList.push(block3);
+
+                const block4 = Blockly.utils.xml.createElement('block');
+                block4.setAttribute('type', 'number_value');
+                xmlList.push(block4);
+
+                const block5 = Blockly.utils.xml.createElement('block');
+                block5.setAttribute('type', 'boolean_value');
+                xmlList.push(block5);
+
+                const block6 = Blockly.utils.xml.createElement('block');
+                block6.setAttribute('type', 'string_value');
+                xmlList.push(block6);
+            }
+            else if (category == 'Math') {
+                const block1 = Blockly.utils.xml.createElement('block');
+                block1.setAttribute('type', 'math_arithmetic');
+                xmlList.push(block1);
+
+                const block2 = Blockly.utils.xml.createElement('block');
+                block2.setAttribute('type', 'math_modulo');
+                xmlList.push(block2);
+
+                const block3 = Blockly.utils.xml.createElement('block');
+                block3.setAttribute('type', 'math_increment');
+                xmlList.push(block3);
+
+                const block4 = Blockly.utils.xml.createElement('block');
+                block4.setAttribute('type', 'math_power');
+                xmlList.push(block4);
+
+                const block5 = Blockly.utils.xml.createElement('block');
+                block5.setAttribute('type', 'math_minmax');
+                xmlList.push(block5);
+
+                const block6 = Blockly.utils.xml.createElement('block');
+                block6.setAttribute('type', 'math_map');
+                xmlList.push(block6);
+            }
+            else if (category == 'Logic') {
+                const block1 = Blockly.utils.xml.createElement('block');
+                block1.setAttribute('type', 'logic_boolean');
+                xmlList.push(block1);
+
+                const block2 = Blockly.utils.xml.createElement('block');
+                block2.setAttribute('type', 'logic_compare');
+                xmlList.push(block2);
+
+                const block3 = Blockly.utils.xml.createElement('block');
+                block3.setAttribute('type', 'logic_operation');
+                xmlList.push(block3);
+
+                const block4 = Blockly.utils.xml.createElement('block');
+                block4.setAttribute('type', 'logic_negate');
+                xmlList.push(block4);
+            }
+            else if (category == 'Control') {
+                const block1 = Blockly.utils.xml.createElement('block');
+                block1.setAttribute('type', 'control_if');
+                xmlList.push(block1);
+
+                const block2 = Blockly.utils.xml.createElement('block');
+                block2.setAttribute('type', 'control_else_if');
+                xmlList.push(block2);
+
+                const block3 = Blockly.utils.xml.createElement('block');
+                block3.setAttribute('type', 'control_else');
+                xmlList.push(block3);
+
+                const block4 = Blockly.utils.xml.createElement('block');
+                block4.setAttribute('type', 'controls_repeat');
+                xmlList.push(block4);
+
+                const block5 = Blockly.utils.xml.createElement('block');
+                block5.setAttribute('type', 'controls_switch_case');
+                xmlList.push(block5);
+
+                const block6 = Blockly.utils.xml.createElement('block');
+                block6.setAttribute('type', 'controls_case');
+                xmlList.push(block6);
+            }
+            else if (category == 'Function') {
+                const block1 = Blockly.utils.xml.createElement('block');
+                block1.setAttribute('type', 'define_function');
+                xmlList.push(block1);
+
+                const block2 = Blockly.utils.xml.createElement('block');
+                block2.setAttribute('type', 'call_function');
+                xmlList.push(block2);
+
+                const block3 = Blockly.utils.xml.createElement('block');
+                block3.setAttribute('type', 'define_function_with_params');
+                xmlList.push(block3);
+
+                const block4 = Blockly.utils.xml.createElement('block');
+                block4.setAttribute('type', 'call_function_with_args');
+                xmlList.push(block4);
+
+                const block5 = Blockly.utils.xml.createElement('block');
+                block5.setAttribute('type', 'define_function_with_return');
+                xmlList.push(block5);
+
+                const block6 = Blockly.utils.xml.createElement('block');
+                block6.setAttribute('type', 'return_value');
+                xmlList.push(block6);
+            }
+
+            workspace.getFlyout().show(xmlList);
+
+            // trackFlyoutPosition();
+            setupSmartFlyoutTracking();
+            document.getElementById('closeFlyoutButton').style.display = 'block';
+        };
+
+
+        let flyoutObserver = null;
+        let sidebarResizeObserver = null;
+        let isCloseButtonShow = 0;
+
+        function hideFlyout() {
+            const flyout = workspace.getFlyout();
+            const flyoutGroup = workspace.getFlyout().svgGroup_;
+            const closeButton = document.getElementById
+                ('closeFlyoutButton');
+            const scrollbars = document.getElementsByClassName('blocklyScrollbarHandle');
+
+
+            if (flyoutGroup) {
+                Array.from(scrollbars).forEach(element => {
+                    element.style.display = 'none';
+                });
+                flyoutGroup.style.transition = 'transform 0.3s ease-out';
+                flyoutGroup.style.transform = 'translateX(-300px)'; // Slide left
+                flyoutObserver = null;
+                sidebarResizeObserver = null;
+                isCloseButtonShow = 0;
+                closeButton.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+                closeButton.style.transform = 'translateX(-100%)';
+                closeButton.style.opacity = '0';
+                setTimeout(() => {
+                }, 300)
+                // After animation, actually hide it
+                setTimeout(() => {
+                    flyout.hide();
+                    flyoutGroup.style.transition = '';
+                    flyoutGroup.style.transform = '';
+
+                    closeButton.style.transition = '';
+                    closeButton.style.transform = '';
+                    closeButton.style.opacity = '0.6';
+                    closeButton.style.display = 'none';
+                    Array.from(scrollbars).forEach(element => {
+                        element.style.display = 'block';
+                    });
+                }, 300); // Match the transition time
+            }
+        }
+
+
+        function setupSmartFlyoutTracking() {
+            isCloseButtonShow += 1;
+
+            const closeButton = document.getElementById('closeFlyoutButton');
+
+            if (!closeButton) return;
+
+            // Observe flyout changes
+            observeFlyout();
+
+            // Observe sidebar-left width changes
+            observeSidebar();
+
+            // Initial position
+            updateCloseButtonPosition();
+            setTimeout(() => {
+                updateCloseButtonPosition();
+            }, 300);
+        }
+
+        function observeFlyout() {
+            const flyoutCollection = document.getElementsByClassName('blocklyFlyout');
+
+            if (flyoutCollection.length > 1) {
+                const flyout = flyoutCollection[1];
+
+                if (flyoutObserver) {
+                    flyoutObserver.disconnect();
+                }
+
+                flyoutObserver = new MutationObserver(() => {
+                    updateCloseButtonPosition();
+                });
+
+                flyoutObserver.observe(flyout, {
+                    attributes: true,
+                    childList: true,
+                    subtree: true
+                });
+            }
+        }
+
+        function observeSidebar() {
+            const sidebar = document.querySelector('.sidebar-left');
+
+            if (!sidebar) return;
+
+            if (sidebarResizeObserver) {
+                sidebarResizeObserver.disconnect();
+            }
+
+            sidebarResizeObserver = new ResizeObserver(() => {
+                updateCloseButtonPosition();
+            });
+
+            sidebarResizeObserver.observe(sidebar, {
+                attributes: true,
+                childList: true,
+                subtree: true
+            });
+        }
+
+        function updateCloseButtonPosition() {
+            const flyoutCollection = document.getElementsByClassName('blocklyFlyout');
+            const sidebar = document.querySelector('.sidebar-left');
+            const closeButton = document.getElementById('closeFlyoutButton');
+
+            if (flyoutCollection.length > 1 && sidebar && closeButton) {
+                const flyout = flyoutCollection[1];
+
+                const flyoutRect = flyout.getBoundingClientRect();
+                const sidebarRect = sidebar.getBoundingClientRect();
+
+                // New smart logic:
+                // Calculate flyout right relative to sidebar growing
+                const extraSidebarWidth = sidebarRect.width - 60; // Assume default is 60px
+                const adjustedFlyoutRight = flyoutRect.right + extraSidebarWidth;
+
+                closeButton.style.left = (flyoutRect.right + 10) + 'px';
+                closeButton.style.top = '50%';
+                closeButton.style.transition = 'left 0.3s ease, top 0.3s ease';
+            }
+        }
+
+
+        workspace.getFlyout().hide()
+
+
+
+
+        // Hide Sidebar 2 secs
+        let hideFlyoutTimer = null;
+
+        document.getElementById('blocklyDiv').addEventListener('mouseenter', () => {
+            if (hideFlyoutTimer) {
+                clearTimeout(hideFlyoutTimer);
+            }
+            hideFlyoutTimer = setTimeout(() => {
+                hideFlyout()
+            }, 2000); // 2 seconds
+        });
+
+        document.getElementById('blocklyDiv').addEventListener('mouseleave', () => {
+            if (hideFlyoutTimer) {
+                clearTimeout(hideFlyoutTimer);
+            }
+        });
+
+        function setActiveCategory(element) {
+            // Remove active from all
+            const allCategories = document.querySelectorAll('.category-item');
+            allCategories.forEach(item => item.classList.remove('active'));
+
+            // Add active to clicked one
+            element.classList.add('active');
+        }
+    </script>
+
+
+
 </body>
-    <script type="text/javascript" src="./script.js"></script>
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coding Blocks</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-<body>
-        
-</body>
-    <script type="text/javascript" src="./script.js"></script>
->>>>>>> 15e3c88 (First Version Control)
+
+
 </html>

@@ -1,0 +1,212 @@
+* {
+  font-family: ComicSans;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100% !important;
+  margin: 0px;
+  overflow: hidden;
+  padding: 5px;
+  
+  background-color: #50B8E7;
+}
+
+
+/* GPT Code */
+.app-container {
+  display: flex;
+  height: 98vh;
+  width: 98vw;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  background-color: #b9e2f5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-left {
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+  background-color: rgba(126, 164, 207, 0.842);
+  transition: width 0.3s;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.sidebar-left:hover {
+  width: 180px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+  user-select: none;
+  overflow-y: hidden;
+}
+
+.category-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.category-item.active {
+  background-color: #c8d5df; /* light highlight */
+  border-left: 4px solid #09b7e3; /* blue side border */
+}
+
+.category-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+  padding: 10px;
+}
+
+.category-label {
+  color: black;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-weight: bold ;
+}
+
+.sidebar-left:hover .category-label {
+  opacity: 1;
+}
+
+.flyout-sidebar {
+  position: relative;
+  top: 0;
+  width: 180px;
+  height: 100%;
+  background: #ffffff;
+  border-left: 2px solid #ccc;
+  overflow-y: auto;
+  padding: 10px;
+  display: none;
+  /* Hidden by default */
+  z-index: 5;
+}
+
+.flyoutSidebarClose{
+  height: 30px !important;
+  width: 30px !important;
+  border-radius: 50% !important;
+  background-color: #09b7e3;
+
+}
+
+#closeFlyoutButton {
+  position: absolute;
+  top: 50%;
+  opacity: 0.6;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #e74c3c;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 3;
+  transition: all 0.4s ease;
+}
+
+#closeFlyoutButton:hover {
+  background-color: #812b21;
+}
+
+.blocklyFlyout {
+  transition: all 0.5s ease;
+  display: block;
+  z-index: 4;
+}
+
+.generate-button {
+  position: absolute;
+  top: 10px;
+  right: 60px;
+  background-color: #3498db;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: white;
+  font-weight: 900;
+  font-size: larger;
+  cursor: pointer;
+}
+
+.code-sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 0;
+  background-color: rgba(126, 164, 207, 0.842);
+  overflow: hidden;
+  transition: width 0.3s;
+  box-shadow: -4px 0 6px rgba(0, 0, 0, 0.1);
+  color: black;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.code-sidebar.open {
+  width: 300px;
+}
+
+.code-box {
+  flex-grow: 1;
+  background: rgb(24, 118, 141)e1;
+  border: 1px solid rgb(9, 13, 14)e1;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 13px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  margin-top: 10px;
+  color: black;
+}
+
+/* Hover overlay on right edge */
+.hover-toggle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 40px;
+  background-image: transparent;
+  z-index: 5;
+  cursor: pointer;
+  transition: background-image 0.2s;
+}
+
+.hover-toggle:hover {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9));
+
+  transition: background-image 0.2s;
+}
+
+/* Close button (X) inside sidebar */
+.close-button {
+  align-self: flex-end;
+  margin: 10px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
