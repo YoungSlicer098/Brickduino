@@ -101,22 +101,22 @@ document.querySelectorAll('.section').forEach((section) => {
 
 
 const components = [
-    { title: "Arduino UNO R3", image: "img/components/Arduino.png", desc: "The main microcontroller board that reads inputs from sensors and controls outputs like LEDs, displays, and buzzers. It serves as the brain of your project." },
-    { title: "7-Segment Display", image: "img/components/7segment.png", desc: "Shows numerical data (0–9), useful for counters or timers." },
-    { title: "LED", image: "img/components/LED.png", desc: "Lights up to show status, signals, or sensor results." },
-    { title: "LCD Module", image: "img/components/LCD.png", desc: "Displays text and numbers from Arduino data like temperature or distance." },
-    { title: "RGB LED", image: "img/components/RGB_LED.png", desc: "Single LED that can emit various colors by mixing red, green, and blue." },
-    { title: "Passive/Active Buzzer", image: "img/components/Passive_and_Active_Buzzer.png", desc: "Produces sound: active buzzers play tones, passive ones allow custom melodies." },
-    { title: "Ultrasonic Sensor", image: "img/components/Ultrasonic.png", desc: "Measures distance by sound waves bouncing off surfaces." },
-    { title: "Water Level Detection Sensor", image: "img/components/Water_Level_Detection.png", desc: "Detects presence or level of water for monitoring or alerts." },
-    { title: "DHT11 Module", image: "img/components/DHT11.png", desc: "Measures temperature and humidity, useful for weather stations." },
-    { title: "Sound Sensor Module", image: "img/components/Sound_Sensor.png", desc: "Detects sound intensity, perfect for clap-controlled devices." },
-    { title: "Joystick Module", image: "img/components/Joystick.png", desc: "Directional input device with X, Y axes plus push button." },
-    { title: "Potentiometer", image: "img/components/potentiometer.png", desc: "Adjusts brightness or volume by varying resistance." },
-    { title: "74HC595 (Shift Register)", image: "img/components/74HC595.png", desc: "Expands Arduino output pins for more LEDs or displays." },
-    { title: "L293D Motor Driver", image: "img/components/L293D.png", desc: "Controls motors’ speed and direction with Arduino." },
-    { title: "Push Button", image: "img/components/Push_Button.png", desc: "Simple switch for triggering actions manually." },
-    { title: "Slide Switch", image: "img/components/Slide_Switch.png", desc: "Toggle switch for switching between modes (on/off)." }
+    { title: "Arduino UNO R3", image: "img/Components/Arduino.png", desc: "The main microcontroller board that reads inputs from sensors and controls outputs like LEDs, displays, and buzzers. It serves as the brain of your project." },
+    { title: "7-Segment Display", image: "img/Components/7segment.png", desc: "Shows numerical data (0–9), useful for counters or timers." },
+    { title: "LED", image: "img/Components/LED.png", desc: "Lights up to show status, signals, or sensor results." },
+    { title: "LCD Module", image: "img/Components/LCD.png", desc: "Displays text and numbers from Arduino data like temperature or distance." },
+    { title: "RGB LED", image: "img/Components/RGB_LED.png", desc: "Single LED that can emit various colors by mixing red, green, and blue." },
+    { title: "Passive/Active Buzzer", image: "img/Components/Passive_and_Active_Buzzer.png", desc: "Produces sound: active buzzers play tones, passive ones allow custom melodies." },
+    { title: "Ultrasonic Sensor", image: "img/Components/Ultrasonic.png", desc: "Measures distance by sound waves bouncing off surfaces." },
+    { title: "Water Level Detection Sensor", image: "img/Components/Water_Level_Detection.png", desc: "Detects presence or level of water for monitoring or alerts." },
+    { title: "DHT11 Module", image: "img/Components/DHT11.png", desc: "Measures temperature and humidity, useful for weather stations." },
+    { title: "Sound Sensor Module", image: "img/Components/Sound_Sensor.png", desc: "Detects sound intensity, perfect for clap-controlled devices." },
+    { title: "Joystick Module", image: "img/Components/Joystick.png", desc: "Directional input device with X, Y axes plus push button." },
+    { title: "Potentiometer", image: "img/Components/potentiometer.png", desc: "Adjusts brightness or volume by varying resistance." },
+    { title: "74HC595 (Shift Register)", image: "img/Components/74HC595.png", desc: "Expands Arduino output pins for more LEDs or displays." },
+    { title: "L293D Motor Driver", image: "img/Components/L293D.png", desc: "Controls motors’ speed and direction with Arduino." },
+    { title: "Push Button", image: "img/Components/Push_Button.png", desc: "Simple switch for triggering actions manually." },
+    { title: "Slide Switch", image: "img/Components/Slide_Switch.png", desc: "Toggle switch for switching between modes (on/off)." }
 ];
 
 const container = document.getElementById('carousel');
