@@ -1,6 +1,6 @@
-goog.provide('Blockly.Arduino.generator');
+// goog.provide('Blockly.Arduino.generator');
 
-goog.require('Blockly.Arduino');
+// goog.require('Blockly.Arduino');
 
 
 
@@ -8,7 +8,7 @@ goog.require('Blockly.Arduino');
 
 Blockly.Arduino['setup_block'] = function (block) {
     const statements = Blockly.Arduino.statementToCode(block, 'SETUP_CONTENT');
-    Blockly.Arduino.addSetup('setup_block', statements, true);
+    Blockly.Arduino.setups_['user_setup'] = statements;
     return '';
 };
 

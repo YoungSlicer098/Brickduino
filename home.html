@@ -91,6 +91,15 @@
       sensing the environment, controlling lights and displays, generating sound, and
       more—building both logical thinking and technical skills.
     </div>
+
+    <!-- Component Category Toggle Buttons -->
+    <div id="component-selector" class="component-category-buttons">
+      <button class="component-btn active" onclick="selectComponent(this, 'arduino')">Arduino Components</button>
+      <button class="component-btn" onclick="selectComponent(this, 'brickduino')">BrickDuino Components</button>
+    </div>
+
+
+    <!-- Carousel Section -->
     <div class="carousel-wrapper" id="carousel-wrapper">
       <button class="arrow left">◄</button>
       <div id="carousel-block"></div>
@@ -100,6 +109,15 @@
         <div class="carousel-progress-bar" id="carousel-progress-bar"></div>
       </div>
     </div>
+    <!-- <div class="carousel-wrapper" id="carousel-wrapper">
+      <button class="arrow left">◄</button>
+      <div id="carousel-block"></div>
+      <div id="carousel" class="carousel-container"></div>
+      <button class="arrow right">►</button>
+      <div class="carousel-progress">
+        <div class="carousel-progress-bar" id="carousel-progress-bar"></div>
+      </div>
+    </div> -->
   </div>
   <div class="popup-background" id="popup-background" onclick="closePopup()">
     <div class="popup" id="popup">
@@ -112,14 +130,20 @@
 
   <div id="exercises" class="section">
     <h2>Exercises Section</h2>
-    <p>Coming soon...</p>
+    <br>
+    <img class="exercise-img" src="img/new.png">
+    <br>
+    <a href="Exercise.html" target="_blank"><button id="coding-button">View Exercises</button></a>
+    <br>
   </div>
 
   <div id="coding-blocks" class="section">
     <h2>Coding Blocks Section</h2>
+    <br>
     <img class="coding-blocks-img" src="img/CodingBlocks_img1.png">
-
+    <br>
     <a href="blockly.html" target="_blank"><button id="coding-button">Start Coding</button></a>
+    <br>
   </div>
   <br> <br>
 

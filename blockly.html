@@ -14,6 +14,11 @@
 </head>
 
 <body>
+    <div id="beta-alert" class="beta-popup">
+        <span>🚧 This app is currently in beta. Mobile support is limited, and code generation for Blockly is not yet
+            available.</span>
+        <button onclick="document.getElementById('beta-alert').style.display='none'" class="beta-close">×</button>
+    </div>
     <div class="app-container">
         <!-- Left Category Sidebar -->
         <div class="sidebar-left">
@@ -78,25 +83,15 @@
     <!-- Blockly Script -->
     <script type="text/javascript" src="https://unpkg.com/blockly/blockly.min.js"></script>
 
-    <script type="text/javascript">
-        Blockly.Arduino = new Blockly.Generator('Arduino');
-
-        Blockly.Arduino = Blockly.Arduino || {};
-    </script>
-
     <!-- Arduino -->
+    <!-- <script type="text/javascript" src="blockly/generators/arduino.js"></script> -->
     <script type="text/javascript" src="generators/arduino.js"></script>
-
 
     <!-- Block Definitions -->
     <script type="text/javascript" src="blocks/custom_blocks.js"></script>
 
-
     <!-- Arduino Generators -->
     <script type="text/javascript" src="generators/arduino_generator.js"></script>
-
-    <!-- Main Script -->
-    <script type="text/javascript" src="../script.js"></script>
 
     <!-- Workspace Script -->
     <script type="text/javascript">
@@ -138,6 +133,12 @@
             console.log("Calling Arduino generator...");
             console.log(Blockly.Arduino.workspaceToCode);
 
+            workspace.getAllBlocks().forEach(block => {
+                if (!Blockly.Arduino[block.type]) {
+                    console.warn(`Missing generator for block type: ${block.type}`);
+                }
+            });
+
             if (isOpen || forceClose) {
                 sidebar.classList.remove('open');
             } else {
@@ -146,9 +147,12 @@
                 try {
                     // Generate Arduino code from workspace
                     Arduino.init(workspace);
+
+                    console.log("Is generator for 'setup_block' defined?", typeof Arduino['setup_block']);
                     const generatedCode = Arduino.workspaceToCode(workspace);
-                    console.log(generatedCode)
-                    document.getElementById('codeOutput').innerText = generatedCode || '// No code generated yet.';
+                    let code = Blockly.Arduino.finish(generatedCode);
+                    console.log(code)
+                    document.getElementById('codeOutput').innerText = code || '// No code generated yet.';
                 } catch (error) {
                     console.error('Code generation error:', error);
                     document.getElementById('codeOutput').innerText = '// Error generating code.';
@@ -160,6 +164,8 @@
 
         // Auto load start up
         window.addEventListener('load', () => {
+            // Clear first (if needed)
+            workspace.clear();
 
             const setupBlock = workspace.newBlock('setup_block');
             setupBlock.initSvg();
@@ -199,8 +205,6 @@
                 return;
             }
         });
-
-        workspace.clear();
 
         // Function to create blocks manually
         function showBlocks(category) {

@@ -69,7 +69,7 @@ body.loading {
 }
 
 .navbar-mobile,
-.navbar-mobile-menu{
+.navbar-mobile-menu {
     display: none;
 }
 
@@ -415,6 +415,43 @@ body.loading {
     background-color: #5a5a5a4d;
 }
 
+
+.component-category-buttons {
+    text-align: center;
+    margin: 20px 0;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+.component-btn {
+    padding: 10px 25px;
+    font-size: 1em;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    overflow-y: hidden;
+    margin: 30px;
+    transform: translateY();
+}
+
+.component-btn:hover {
+    background-color: #007BFF;
+    color: white;
+}
+
+.component-btn.active {
+    background-color: #0056d2;
+    /* Darker blue for selected */
+    color: white;
+    border-color: #0056d2;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+
 .brick-image {
     position: absolute;
     z-index: 0;
@@ -433,6 +470,16 @@ body.loading {
 }
 
 .coding-blocks-img:hover {
+    scale: 1.05;
+}
+
+.exercise-img {
+    width: 30%;
+    height: 40%;
+    border: 5px solid white
+}
+
+.exercise-img:hover {
     scale: 1.05;
 }
 
@@ -505,9 +552,11 @@ body.loading {
     .img-flat-logo {
         display: none;
     }
-    .navbar{
+
+    .navbar {
         display: none;
     }
+
     .navbar-mobile {
         position: fixed;
         top: 15px;
@@ -572,6 +621,25 @@ body.loading {
 
     .navbar-mobile-menu nav a:hover {
         color: #ffcc00;
+    }
+
+    .brick-image {
+        position: absolute;
+        z-index: 0;
+        width: 20vw;
+        height: auto;
+        opacity: 0.8;
+        pointer-events: none;
+        user-select: none;
+        transition: transform 0.3s ease;
+    }
+
+    .component-btn {
+        margin: 30px 5px;
+    }
+
+    .component-category-buttons {
+        justify-content: spaced-evenly;
     }
 }
 

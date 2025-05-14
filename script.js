@@ -100,15 +100,35 @@ document.querySelectorAll('.section').forEach((section) => {
 });
 
 
-const components = [
-    { title: "Arduino UNO R3", image: "img/Components/Arduino.png", desc: "The main microcontroller board that reads inputs from sensors and controls outputs like LEDs, displays, and buzzers. It serves as the brain of your project." },
+// const components = [
+//     { title: "Arduino UNO R3", image: "img/Components/Arduino.png", desc: "The main microcontroller board that reads inputs from sensors and controls outputs like LEDs, displays, and buzzers. It serves as the brain of your project." },
+//     { title: "7-Segment Display", image: "img/Components/7segment.png", desc: "Shows numerical data (0–9), useful for counters or timers." },
+//     { title: "LED", image: "img/Components/LED.png", desc: "Lights up to show status, signals, or sensor results." },
+//     { title: "LCD Module", image: "img/Components/LCD.png", desc: "Displays text and numbers from Arduino data like temperature or distance." },
+//     { title: "RGB LED", image: "img/Components/RGB_LED.png", desc: "Single LED that can emit various colors by mixing red, green, and blue." },
+//     { title: "Passive/Active Buzzer", image: "img/Components/Passive_and_Active_Buzzer.png", desc: "Produces sound: active buzzers play tones, passive ones allow custom melodies." },
+//     { title: "Ultrasonic Sensor", image: "img/Components/Ultrasonic.png", desc: "Measures distance by sound waves bouncing off surfaces." },
+//     { title: "Water Level Detection Sensor", image: "img/Components/Water_Level_Detection.png", desc: "Detects presence or level of water for monitoring or alerts." },
+//     { title: "DHT11 Module", image: "img/Components/DHT11.png", desc: "Measures temperature and humidity, useful for weather stations." },
+//     { title: "Sound Sensor Module", image: "img/Components/Sound_Sensor.png", desc: "Detects sound intensity, perfect for clap-controlled devices." },
+//     { title: "Joystick Module", image: "img/Components/Joystick.png", desc: "Directional input device with X, Y axes plus push button." },
+//     { title: "Potentiometer", image: "img/Components/potentiometer.png", desc: "Adjusts brightness or volume by varying resistance." },
+//     { title: "74HC595 (Shift Register)", image: "img/Components/74HC595.png", desc: "Expands Arduino output pins for more LEDs or displays." },
+//     { title: "L293D Motor Driver", image: "img/Components/L293D.png", desc: "Controls motors’ speed and direction with Arduino." },
+//     { title: "Push Button", image: "img/Components/Push_Button.png", desc: "Simple switch for triggering actions manually." },
+//     { title: "Slide Switch", image: "img/Components/Slide_Switch.png", desc: "Toggle switch for switching between modes (on/off)." }
+// ];
+
+
+// Component Data
+const arduinoComponents = [
+    { title: "Arduino UNO R3", image: "img/Components/Arduino.png", desc: "The main microcontroller board that reads inputs from sensors and controls outputs like LEDs, displays, and buzzers." },
     { title: "7-Segment Display", image: "img/Components/7segment.png", desc: "Shows numerical data (0–9), useful for counters or timers." },
     { title: "LED", image: "img/Components/LED.png", desc: "Lights up to show status, signals, or sensor results." },
     { title: "LCD Module", image: "img/Components/LCD.png", desc: "Displays text and numbers from Arduino data like temperature or distance." },
     { title: "RGB LED", image: "img/Components/RGB_LED.png", desc: "Single LED that can emit various colors by mixing red, green, and blue." },
     { title: "Passive/Active Buzzer", image: "img/Components/Passive_and_Active_Buzzer.png", desc: "Produces sound: active buzzers play tones, passive ones allow custom melodies." },
     { title: "Ultrasonic Sensor", image: "img/Components/Ultrasonic.png", desc: "Measures distance by sound waves bouncing off surfaces." },
-    { title: "Water Level Detection Sensor", image: "img/Components/Water_Level_Detection.png", desc: "Detects presence or level of water for monitoring or alerts." },
     { title: "DHT11 Module", image: "img/Components/DHT11.png", desc: "Measures temperature and humidity, useful for weather stations." },
     { title: "Sound Sensor Module", image: "img/Components/Sound_Sensor.png", desc: "Detects sound intensity, perfect for clap-controlled devices." },
     { title: "Joystick Module", image: "img/Components/Joystick.png", desc: "Directional input device with X, Y axes plus push button." },
@@ -119,23 +139,50 @@ const components = [
     { title: "Slide Switch", image: "img/Components/Slide_Switch.png", desc: "Toggle switch for switching between modes (on/off)." }
 ];
 
-const container = document.getElementById('carousel');
-components.forEach(c => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.onclick = () => openPopup(c.title, c.desc, c.image);
+const brickduinoComponents = [
+    { title: 'Brickduino Uno R3', image: 'img/brickponents/unor3_brickduino.png', desc: 'A modular, block-shaped microcontroller based on the Arduino Uno R3 for controlling electronic components.' },
+    { title: 'Brickduino Breadboard', image: 'img/brickponents/breadboard_brickduino.png', desc: 'A modular prototyping board for connecting electronic components without soldering.' },
+    { title: 'Brickduino LED', image: 'img/brickponents/brickduino_led.png', desc: 'A modular LED brick used to emit light in circuit experiments.' },
+    { title: 'Brickduino LCD', image: 'img/brickponents/lcd_brickduino.png', desc: 'A modular display brick for showing text or numeric outputs from the microcontroller.' },
+    { title: 'Brickduino Push Button', image: 'img/brickponents/push_button_brickduino.png', desc: 'A modular input brick that acts as a momentary switch in circuits.' },
+    { title: 'Brickduino Buzzer', image: 'img/brickponents/buzzerbrickduino.png', desc: 'A modular buzzer brick used to produce sound signals or alerts in circuits.' },
+    { title: 'Brickduino 7-Segment Display', image: 'img/brickponents/7segment_brikduino.png', desc: 'A modular numeric display brick for showing digits using seven individual segments.' }
+];
 
-    const img = document.createElement('img');
-    img.src = c.image;
 
-    const title = document.createElement('div');
-    title.className = 'title';
-    title.innerText = c.title;
+function selectComponent(button, type) {
+    const buttons = document.querySelectorAll('.component-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
 
-    card.appendChild(img);
-    card.appendChild(title);
-    container.appendChild(card);
-});
+    button.classList.add('active');
+
+    showComponents(type);
+}
+
+function showComponents(type) {
+    const container = document.getElementById('carousel');
+    container.innerHTML = ''; // Clear existing cards
+    const components = type === 'arduino' ? arduinoComponents : brickduinoComponents;
+
+    components.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.onclick = () => openPopup(c.title, c.desc, c.image);
+
+        const img = document.createElement('img');
+        img.src = c.image;
+
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.innerText = c.title;
+
+        card.appendChild(img);
+        card.appendChild(title);
+        container.appendChild(card);
+    });
+}
+
+showComponents('arduino')
 
 document.querySelector('.arrow.left').addEventListener('click', () => {
     carousel.scrollBy({ left: -600, behavior: 'smooth' });
@@ -243,6 +290,8 @@ function closePopup() {
     document.getElementById('popup-background').style.display = 'none';
 }
 
+// -------------------
+
 const sections = document.querySelectorAll(".section");
 const navLinks = document.querySelectorAll(".nav-middle a");
 
@@ -259,11 +308,12 @@ function updateActiveLink() {
     }
 }
 
+// ------------------- Refresh goes back to Home Section -------------------
+
 window.addEventListener("scroll", updateActiveLink);
 window.addEventListener("load", updateActiveLink); // Run once on load
 
 window.addEventListener('load', () => {
-    // Optional: Remove hash from URL
 
     if (location.hash) {
         history.replaceState(null, null, ' ');
@@ -271,7 +321,6 @@ window.addEventListener('load', () => {
 
     const homeSection = document.getElementById('home');
 
-    // Smooth scroll to top on next animation frame
     if (home) homeSection.scrollIntoView({ behavior: 'smooth' });
 
     setTimeout(() => {
@@ -279,6 +328,8 @@ window.addEventListener('load', () => {
         document.getElementById("loader").style.display = "none";
     }, 100);
 });
+
+// ------------------- Mobile Supported Navbar -------------------
 
 const menuBtn = document.getElementById('navbar-mobile-button');
 const mobileMenu = document.getElementById('navbar-mobile-menu');

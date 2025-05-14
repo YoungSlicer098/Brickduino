@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arduino Exercises</title>
+  <link rel="icon" type="image/png" href="img/brick_logo.png">
+  <link rel="stylesheet" href="style/Exercise.css">
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+      <h2>EXERCISES</h2>
+      <ul>
+        <li><button onclick="scrollToSection('stoplight')">🚦 Stop Light</button></li>
+        <li><button onclick="scrollToSection('pushbutton')">🔘 Pushbutton</button></li>
+        <li><button onclick="scrollToSection('buzzer')">🔊 Buzzer</button></li>
+        <li><button onclick="scrollToSection('lcd')">📺 LCD</button></li>
+        <li><button onclick="scrollToSection('sevensegment')">🔢 7-Segment</button></li>
+      </ul>
+
+      <div class="install-button">
+        <button onclick="scrollToSection('installIDE')">⬇️ Install IDE</button>
+      </div>
+    </nav>
+
+
+    <!-- Mobile Navbar Button (Hamburger) -->
+    <div id="navbar-mobile-button" class="navbar-mobile">
+      <img src="img/brick_logo.png" alt="menu" class="mobile-logo" onclick="toggleSidebar()" />
+    </div>
+
+    <!-- navbar-mobile-menu (also used as mobile dropdown) -->
+    <nav id="navbar-mobile-menu" class="navbar-mobile-menu">
+      <h2>EXERCISES</h2>
+      <nav>
+        <a href="#stoplight">🚦 Stop Light</a>
+        <a href="#pushbutton">🔘 Pushbutton</a>
+        <a href="#buzzer">🔊 Buzzer</a>
+        <a href="#lcd">📺 LCD</a>
+        <a href="#sevensegment">🔢 7-Segment</a>
+      </nav>
+      <div class="install-button">
+        <button onclick="scrollToSection('installIDE')">⬇️ Install IDE</button>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="content">
+      <header>
+        <h1 class="fun-gradient">ARDUINO PROJECT TUTORIALS</h1>
+      </header>
+
+      <!-- Stop Light Section -->
+      <section id="stoplight" class="tutorial">
+        <h2>How to Make a Stop Light with Arduino</h2>
+        <div class="step">
+          <h3>Step 1: Gather Your Materials</h3>
+          <p>You'll need an Arduino Uno, red/yellow/green LEDs, 220Ω resistors, jumper wires, and a breadboard.</p>
+        </div>
+        <div class="step">
+          <h3>Step 2: Set Up the LEDs</h3>
+          <p>Connect the LEDs to pins 8, 9, and 10. Use resistors to avoid burning them out.</p>
+          <img src="img/exercises_pics/stop_light.png" alt="LED wiring diagram" style="display: block; margin: auto;">
+        </div>
+        <div class="step">
+          <h3>Step 3: Upload the Code</h3>
+          <pre><code>void setup() {
+  pinMode(8, OUTPUT); // Red
+  pinMode(9, OUTPUT); // Yellow
+  pinMode(10, OUTPUT); // Green
+}
+
+void loop() {
+  digitalWrite(10, HIGH); delay(3000); // Green
+  digitalWrite(10, LOW); digitalWrite(9, HIGH); delay(1000); // Yellow
+  digitalWrite(9, LOW); digitalWrite(8, HIGH); delay(3000); // Red
+  digitalWrite(8, LOW);
+}
+</code></pre>
+        </div>
+      </section>
+
+      <!-- Pushbutton Section -->
+      <section id="pushbutton" class="tutorial">
+        <h2>How to Use a Pushbutton with Arduino</h2>
+        <div class="step">
+          <h3>Step 1: Gather Your Materials</h3>
+          <p>You'll need an Arduino Uno, a pushbutton, a 10kΩ resistor, jumper wires, and a breadboard.</p>
+        </div>
+        <div class="step">
+          <h3>Step 2: Wire the Pushbutton</h3>
+          <p>Connect one leg of the pushbutton to pin 2 on the Arduino and the other to ground. Use a pull-up resistor
+            or enable internal pull-up in code.</p>
+          <img src="img/exercises_pics/pushbutton.png" alt="Pushbutton wiring diagram"
+            style="display: block; margin: auto;">
+        </div>
+        <div class="step">
+          <h3>Step 3: Upload the Code</h3>
+          <pre><code>void setup() {
+  pinMode(2, INPUT_PULLUP); // Enable internal pull-up resistor
+  pinMode(13, OUTPUT); // Built-in LED
+}
+
+void loop() {
+  if (digitalRead(2) == LOW) {
+    digitalWrite(13, HIGH); // LED ON
+  } else {
+    digitalWrite(13, LOW); // LED OFF
+  }
+}
+</code></pre>
+        </div>
+      </section>
+
+      <!-- Buzzer Section -->
+      <section id="buzzer" class="tutorial">
+        <h2>How to Use a Buzzer with Arduino</h2>
+        <div class="step">
+          <h3>Step 1: Gather Your Materials</h3>
+          <p>You'll need an Arduino Uno, a piezo buzzer, jumper wires, and a breadboard.</p>
+        </div>
+        <div class="step">
+          <h3>Step 2: Connect the Buzzer</h3>
+          <p>Connect the positive leg of the buzzer to pin 8 and the negative leg to ground.</p>
+          <img src="img/exercises_pics/buzzer.png" alt="Buzzer wiring diagram" style="display: block; margin: auto;">
+        </div>
+        <div class="step">
+          <h3>Step 3: Upload the Code</h3>
+          <pre><code>void setup() {
+  pinMode(8, OUTPUT);
+}
+
+void loop() {
+  tone(8, 1000); // 1kHz tone
+  delay(500);
+  noTone(8);
+  delay(500);
+}
+</code></pre>
+        </div>
+      </section>
+
+      <!-- LCD Section -->
+      <section id="lcd" class="tutorial">
+        <h2>How to Use an LCD with Arduino</h2>
+        <div class="step">
+          <h3>Step 1: Gather Your Materials</h3>
+          <p>You'll need an Arduino Uno, an I2C 16x2 LCD, jumper wires, and optionally a breadboard.</p>
+        </div>
+        <div class="step">
+          <h3>Step 2: Connect the LCD</h3>
+          <p>Connect the LCD VCC to 5V, GND to GND, SDA to A4, and SCL to A5.</p>
+          <img src="img/exercises_pics/lcd.png" alt="LCD wiring diagram" style="display: block; margin: auto;">
+        </div>
+        <div class="step">
+          <h3>Step 3: Upload the Code</h3>
+          <p>Make sure you have the <strong>LiquidCrystal_I2C</strong> library installed in the Arduino IDE.</p>
+          <pre><code>#include &lt;Wire.h&gt;
+#include &lt;LiquidCrystal_I2C.h&gt;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Adjust address if needed
+
+void setup() {
+  lcd.begin();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Hello, world!");
+}
+
+void loop() {
+  // No looping code needed for this example
+}
+</code></pre>
+        </div>
+      </section>
+
+      <!-- 7-Segment Display Section -->
+      <section id="sevensegment" class="tutorial">
+        <h2>How to Use a 7-Segment Display with Arduino</h2>
+        <div class="step">
+          <h3>Step 1: Gather Your Materials</h3>
+          <p>You'll need an Arduino Uno, a 1-digit common cathode 7-segment display, 220Ω resistors (x7), jumper wires,
+            and a breadboard.</p>
+        </div>
+        <div class="step">
+          <h3>Step 2: Connect the 7-Segment Display</h3>
+          <p>Connect the segments to digital pins 2–8 on the Arduino through resistors. Connect the common cathode pins
+            to GND.</p>
+          <img src="img/exercises_pics/7segment.png" alt="7-Segment wiring diagram"
+            style="display: block; margin: auto;">
+        </div>
+        <div class="step">
+          <h3>Step 3: Upload the Code</h3>
+          <pre><code>// Segment pins: A, B, C, D, E, F, G
+int segmentPins[] = {2, 3, 4, 5, 6, 7, 8};
+
+// Digit patterns for 0-9
+byte digits[10][7] = {
+  {1,1,1,1,1,1,0}, // 0
+  {0,1,1,0,0,0,0}, // 1
+  {1,1,0,1,1,0,1}, // 2
+  {1,1,1,1,0,0,1}, // 3
+  {0,1,1,0,0,1,1}, // 4
+  {1,0,1,1,0,1,1}, // 5
+  {1,0,1,1,1,1,1}, // 6
+  {1,1,1,0,0,0,0}, // 7
+  {1,1,1,1,1,1,1}, // 8
+  {1,1,1,1,0,1,1}  // 9
+};
+
+void setup() {
+  for (int i = 0; i < 7; i++) {
+    pinMode(segmentPins[i], OUTPUT);
+  }
+}
+
+void loop() {
+  for (int num = 0; num < 10; num++) {
+    for (int i = 0; i < 7; i++) {
+      digitalWrite(segmentPins[i], digits[num][i]);
+    }
+    delay(1000); // Show digit for 1 second
+  }
+}
+</code></pre>
+        </div>
+      </section>
+
+      <section id="installIDE" class="tutorial">
+        <h2>How to Install the Arduino IDE</h2>
+
+        <div class="step">
+          <h3>Step 1: Go to the Official Website</h3>
+          <p>Visit the official Arduino software page:
+            <a href="https://www.arduino.cc/en/software" target="_blank">arduino.cc/en/software</a>.
+          </p>
+        </div>
+
+        <div class="step">
+          <h3>Step 2: Choose Your Operating System</h3>
+          <p>Select your OS (Windows, Mac, or Linux). For Windows, you can choose "Windows Installer" or "Windows ZIP
+            file".</p>
+          <img class="ide.img" src="img/ide.png" style="display: block; margin: auto;">
+        </div>
+
+        <div class="step">
+          <h3>Step 3: Download and Install</h3>
+          <h4>Windows</h4>
+          <p>1. Download the latest release</p>
+          <p>2. Double-click the executable (.exe) file.</p>
+          <p>3. Follow the instructions in the installation guide.</p>
+          <p>4. When completing the setup, leave Run Arduino IDE ticked to launch the application, or launch it later
+            from the Start Menu.</p>
+          <br>
+          <h4>MacOS</h4>
+          <p>1. Download the latest release</p>
+          <p>2. Double-click the disk image (.dmg) file.</p>
+          <p>3. Drag and drop the Arduino IDE application into the Applications folder.</p>
+          <p>4. Launch Arduino IDE the same way you would launch any other application (such as ⌘ + Space for Spotlight
+            and search for “Arduino”).</p>
+          <br>
+          <h4>Linux</h4>
+          <p>1. Download the latest release</p>
+          <p>2. Find the AppImage file in your file manager.</p>
+          <p>3. Make the AppImage file executable:</p>
+          <p>- Right-click the file.</p>
+          <p>-Choose Properties,</p>
+          <p>-Select the Permissions.</p>
+          <p>-Tick the Allow executing file as program box.</p>
+          <p>4. Double-click the AppImage file to launch Arduino IDE.</p>
+        </div>
+
+        <div class="step">
+          <h3>Step 4: Launch Arduino IDE</h3>
+          <p>After installation, launch the IDE and connect your Arduino board via USB. Make sure to install the USB
+            drivers when prompted.</p>
+        </div>
+
+        <div class="step">
+          <h3>Step 5: Test Your Installation</h3>
+          <p>Open the "Blink" example from <code>File > Examples > 01.Basics > Blink</code>. Select your board under
+            <code>Tools > Board</code>, then click the upload button.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+
+  <!-- JavaScript for scrolling -->
+  <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("open");
+    }
+
+    function scrollToSection(id) {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      // Optionally hide sidebar on mobile after clicking
+      if (window.innerWidth <= 1010) {
+        document.getElementById("sidebar").classList.remove("open");
+      }
+    }
+
+    const menuBtn = document.getElementById('navbar-mobile-button');
+    const mobileMenu = document.getElementById('navbar-mobile-menu');
+
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+
+    // Close menu when a link is clicked
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+
+</html>
