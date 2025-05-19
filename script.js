@@ -12,7 +12,17 @@ function updateButtonTransform() {
     btn.style.transform = `translateY(${translateY}px) scale(${scale})`;
 }
 
+
 updateButtonTransform();
+
+
+function scrollToSection(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    // Optionally hide sidebar on mobile after clicking
+    if (window.innerWidth <= 1010) {
+        document.getElementById("sidebar").classList.remove("open");
+    }
+}
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -38,6 +48,8 @@ const sectionBricksMap = new Map(); // Keep track of bricks in each section
 
 function addRandomBricksToSections() {
     const sections = document.querySelectorAll('.section');
+    let leftSection = 0;
+    let topSection = 0;
 
     sections.forEach((section) => {
         section.style.position = 'relative';
@@ -52,14 +64,16 @@ function addRandomBricksToSections() {
             const sectionHeight = section.offsetHeight;
             const sectionWidth = section.offsetWidth;
 
-            const randomTop = Math.floor(Math.random() * sectionHeight) + 130;
-            const randomLeft = Math.floor(Math.random() * sectionWidth);
+            const randomTop = Math.floor(Math.random() * sectionHeight) + topSection;
+            const randomLeft = Math.floor(Math.random() * sectionWidth) + leftSection;
 
             imgElement.style.top = `${randomTop}px`;
             imgElement.style.left = `${randomLeft}px`;
 
             section.appendChild(imgElement);
             bricks.push(imgElement);
+            leftSection += 7;
+            topSection += 20;
         });
 
         sectionBricksMap.set(section, bricks);
@@ -303,7 +317,7 @@ function updateActiveLink() {
     navLinks.forEach(link => link.classList.remove("active"));
     if (index >= 0) {
         const currentSectionId = sections[index].id;
-        const activeLink = document.querySelector(`.nav-middle a[href="#${currentSectionId}"]`);
+        const activeLink = document.querySelector(`.nav-middle a[onclick="scrollToSection('${currentSectionId}')"`);
         if (activeLink) activeLink.classList.add("active");
     }
 }
