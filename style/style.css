@@ -412,7 +412,7 @@ body.loading {
     z-index: 5;
     border-radius: 10px;
     margin: 0px 10px;
-    background-color: #5a5a5abb;
+    background-color: rgba(70, 70, 70, 0.4);
 }
 
 
@@ -515,7 +515,7 @@ body.loading {
     z-index: 5;
     border-radius: 10px;
     margin: 0px 10px;
-    background-color: #5a5a5abb;
+    background-color: rgba(70, 70, 70, 0.4);
 }
 
 /*
@@ -752,3 +752,104 @@ body.loading {
 
 /* Phone */
 /* @media all and (min-width:0px) and (max-width: 768px){
+
+/* Feedback Section Styles */
+.feedback-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}
+
+.feedback-form {
+    background: rgba(70, 70, 70, 0.4);
+    padding: 0px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.feedback-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1em;
+    margin: 0px 20px;
+}
+
+.feedback-form textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+.feedback-form input::placeholder,
+.feedback-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+#submit-feedback {
+    padding: 10px 25px;
+    margin: 0px 20px 10px 20px;
+    font-size: 1em;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+#submit-feedback:hover {
+    background: rgba(255, 255, 255, 0.3);
+    scale: 1.05;
+}
+
+.feedback-display {
+    background: rgba(70, 70, 70, 0.4);
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#feedbackList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.feedback-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.feedback-item h4 {
+    margin: 0 0 10px 0;
+    color: #fff;
+}
+
+.feedback-item p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.feedback-date {
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 5px;
+}
