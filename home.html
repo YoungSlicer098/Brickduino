@@ -28,7 +28,8 @@
       <a onclick="scrollToSection('about')"><img class="navbar-icon" src="img/about-icon.png">About</a>
       <a onclick="scrollToSection('components')"><img class="navbar-icon" src="img/components-icon.png">Components</a>
       <a onclick="scrollToSection('exercises')"><img class="navbar-icon" src="img/exercise-icon.png">Exercises</a>
-      <a onclick="scrollToSection('coding-blocks')" id="go-coding-blocks"><img class="navbar-icon" src="img/coding-icon.png">Coding
+      <a onclick="scrollToSection('coding-blocks')" id="go-coding-blocks"><img class="navbar-icon"
+          src="img/coding-icon.png">Coding
         Blocks</a>
     </div>
     <div class="nav-right">
@@ -57,7 +58,7 @@
 
   <div id="about" class="section">
     <h2>About BrickDuino</h2>
-    <h4 class="aboutus-description">At BrickDuino, we are passionate about making electronics, programming, and STEM
+    <div class="aboutus-description">At BrickDuino, we are passionate about making electronics, programming, and STEM
       education accessible and
       enjoyable for everyone, especially young learners. Our mission is to spark curiosity and inspire creativity
       through
@@ -70,10 +71,11 @@
       creating interactive projects, users of all ages can develop practical skills in coding, electronics, and
       problem-solving.
       <br> <br>
-      We believe that learning should be engaging, intuitive, and fun. That’s why our kits come with step-by-step
+      We believe that learning should be engaging, intuitive, and fun. That's why our kits come with step-by-step
       guides, beginner-friendly tutorials, and creative project ideas to help every learner succeed—regardless of their
-      background or experience level. With BrickDuino, we’re not just teaching electronics, we’re building future
-      innovators, one brick at a time.</h3>
+      background or experience level. With BrickDuino, we're not just teaching electronics, we're building future
+      innovators, one brick at a time.
+    </div>
   </div>
 
 
@@ -152,8 +154,9 @@
       <div class="feedback-form">
         <h3>Leave Your Feedback</h3>
         <form id="feedbackForm">
-          <input type="text" id="name" placeholder="Your Name" required>
-          <textarea id="feedbackText" placeholder="Your Feedback" required></textarea>
+          <input type="text" id="name" placeholder="Your Name" required maxlength="50" pattern="[a-zA-Z0-9\s._-]{2,}"
+            title="Name can only contain letters, numbers, spaces, dots, underscores, and hyphens (2-50 characters)">
+          <textarea id="feedbackText" placeholder="Your Feedback" required maxlength="500"></textarea>
           <button type="submit" id="submit-feedback">Submit Feedback</button>
         </form>
       </div>

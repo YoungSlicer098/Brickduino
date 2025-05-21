@@ -6,6 +6,71 @@ const SUBMIT_COOLDOWN = 30000; // 30 seconds cooldown
 const REFRESH_INTERVAL = 10000; // 10 seconds refresh interval
 let lastSubmitTime = 0;
 
+// Input validation configuration
+const MAX_NAME_LENGTH = 50;
+const MAX_FEEDBACK_LENGTH = 500;
+const NAME_REGEX = /^[a-zA-Z0-9\s._-]{2,}$/; // Allows letters, numbers, spaces, dots, underscores, and hyphens
+
+// Profanity filter - Combined English and Filipino curse words
+const PROFANITY_LIST = [
+    // English profanity
+    'fuck', 'shit', 'ass', 'bitch', 'dick', 'pussy', 'cock', 'bastard', 'suck',
+    // Filipino profanity
+    'putang', 'puta', 'tangina', 'gago', 'gaga', 'putangina', 'tanga', 'bobo', 'ulol',
+    'inutil', 'kupal', 'tarantado', 'siraulo', 'pakyu', 'lintik', 'leche', 'pakshet',
+    'punyeta', 'hinayupak', 'hayop', 'kingina'
+];
+
+// Function to check for profanity
+function containsProfanity(text) {
+    const normalizedText = text.toLowerCase().replace(/[^\w\s]/g, '');
+    const words = normalizedText.split(/\s+/);
+    
+    // Check each word against the profanity list
+    for (const word of words) {
+        if (PROFANITY_LIST.some(profanity => word.includes(profanity))) {
+            return true;
+        }
+    }
+    
+    // Check for common letter substitutions (e.g., @ for a, 1 for i)
+    const leetText = normalizedText
+        .replace(/[@4]/g, 'a')
+        .replace(/[1!|]/g, 'i')
+        .replace(/[3]/g, 'e')
+        .replace(/[0]/g, 'o')
+        .replace(/[5]/g, 's')
+        .replace(/[$]/g, 's')
+        .replace(/[+]/g, 't');
+    
+    return PROFANITY_LIST.some(profanity => leetText.includes(profanity));
+}
+
+// Function to validate input
+function validateInput(name, feedback) {
+    // Check name length
+    if (name.length > MAX_NAME_LENGTH) {
+        throw new Error(`Name must be ${MAX_NAME_LENGTH} characters or less`);
+    }
+    
+    // Check feedback length
+    if (feedback.length > MAX_FEEDBACK_LENGTH) {
+        throw new Error(`Feedback must be ${MAX_FEEDBACK_LENGTH} characters or less`);
+    }
+    
+    // Check name format
+    if (!NAME_REGEX.test(name)) {
+        throw new Error('Name can only contain letters, numbers, spaces, dots, underscores, and hyphens');
+    }
+    
+    // Check for profanity in both name and feedback
+    if (containsProfanity(name) || containsProfanity(feedback)) {
+        throw new Error('Please keep your feedback family-friendly and respectful');
+    }
+    
+    return true;
+}
+
 // Function to submit feedback
 async function submitFeedback(event) {
     event.preventDefault();
@@ -21,18 +86,21 @@ async function submitFeedback(event) {
     }
     
     const submitButton = document.getElementById('submit-feedback');
-    submitButton.disabled = true;
+    const name = document.getElementById('name').value.trim();
+    const feedback = document.getElementById('feedbackText').value.trim();
     
-    const name = document.getElementById('name').value;
-    const feedback = document.getElementById('feedbackText').value;
-    const timestamp = new Date().toISOString();
-
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('feedback', feedback);
-    formData.append('timestamp', timestamp);
-
     try {
+        // Validate input before submission
+        validateInput(name, feedback);
+        
+        submitButton.disabled = true;
+        const timestamp = new Date().toISOString();
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('feedback', feedback);
+        formData.append('timestamp', timestamp);
+
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
             body: formData
@@ -57,7 +125,7 @@ async function submitFeedback(event) {
         
     } catch (error) {
         console.error('Error:', error);
-        alert('Sorry, there was an error submitting your feedback. Please try again.');
+        alert(error.message || 'Sorry, there was an error submitting your feedback. Please try again.');
         submitButton.disabled = false;
     }
 }
