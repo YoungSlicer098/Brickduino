@@ -358,3 +358,22 @@ mobileMenu.querySelectorAll('a').forEach(link => {
         mobileMenu.classList.remove('open');
     });
 });
+
+// Credits popup functionality
+const creditsButton = document.getElementById('credits-button');
+const creditsPopup = document.getElementById('credits-popup');
+const creditsClose = document.querySelector('.credits-close');
+
+creditsButton.addEventListener('click', () => {
+    creditsPopup.style.display = 'flex';
+});
+
+creditsClose.addEventListener('click', () => {
+    creditsPopup.style.display = 'none';
+});
+
+creditsPopup.addEventListener('click', (e) => {
+    if (e.target === creditsPopup) {
+        creditsPopup.style.display = 'none';
+    }
+});

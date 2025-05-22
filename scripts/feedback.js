@@ -21,6 +21,10 @@ const PROFANITY_LIST = [
     'punyeta', 'hinayupak', 'hayop', 'kingina'
 ];
 
+// Global variable to track how many feedback items are currently shown
+let visibleFeedbackCount = 5;
+const feedbacksPerPage = 5;
+
 // Function to check for profanity
 function containsProfanity(text) {
     const normalizedText = text.toLowerCase().replace(/[^\w\s]/g, '');
@@ -75,7 +79,6 @@ function validateInput(name, feedback) {
 async function submitFeedback(event) {
     event.preventDefault();
     
-    // Check cooldown
     const currentTime = Date.now();
     const timeSinceLastSubmit = currentTime - lastSubmitTime;
     
@@ -90,7 +93,6 @@ async function submitFeedback(event) {
     const feedback = document.getElementById('feedbackText').value.trim();
     
     try {
-        // Validate input before submission
         validateInput(name, feedback);
         
         submitButton.disabled = true;
@@ -106,22 +108,15 @@ async function submitFeedback(event) {
             body: formData
         });
 
-        // Update last submit time
         lastSubmitTime = currentTime;
-        
-        // Clear the form
         document.getElementById('feedbackForm').reset();
         
-        // Add the new feedback to the display immediately
-        addFeedbackToDisplay(name, feedback, timestamp);
-        
-        // Start cooldown timer display
-        startCooldownTimer(submitButton);
-        
-        alert('Thank you for your feedback!');
-        
-        // Refresh feedback list to ensure synchronization
+        // Reset visible count and refresh the list
+        visibleFeedbackCount = 5;
         await fetchFeedback();
+        
+        startCooldownTimer(submitButton);
+        alert('Thank you for your feedback!');
         
     } catch (error) {
         console.error('Error:', error);
@@ -152,24 +147,23 @@ function startCooldownTimer(button) {
 async function fetchFeedback() {
     try {
         const response = await fetch(`${SCRIPT_URL}?action=getFeedback`);
-        const text = await response.text();  // Get response as text first
+        const text = await response.text();
         
         try {
-            const data = JSON.parse(text);  // Try to parse as JSON
+            const data = JSON.parse(text);
             const feedbackList = document.getElementById('feedbackList');
             feedbackList.innerHTML = ''; // Clear existing feedback
             
             if (Array.isArray(data)) {
                 // Sort feedback by timestamp, newest first
                 data.sort((a, b) => {
-                    const dateA = new Date(a.timestamp).getTime();
-                    const dateB = new Date(b.timestamp).getTime();
-                    return dateA - dateB; // This will put newest first
+                    const dateA = new Date(a.timestamp);
+                    const dateB = new Date(b.timestamp);
+                    return dateB - dateA; // Reverse the order to show newest first
                 });
                 
-                data.forEach(item => {
-                    addFeedbackToDisplay(item.name, item.feedback, item.timestamp);
-                });
+                // Display initial set of feedback
+                displayFeedbackBatch(data);
             }
         } catch (parseError) {
             console.error('Error parsing feedback data:', parseError);
@@ -179,22 +173,40 @@ async function fetchFeedback() {
     }
 }
 
-// Function to add feedback to the display
-function addFeedbackToDisplay(name, feedback, timestamp) {
+// Function to display a batch of feedback items
+function displayFeedbackBatch(allFeedback) {
     const feedbackList = document.getElementById('feedbackList');
-    const feedbackItem = document.createElement('div');
-    feedbackItem.className = 'feedback-item';
+    feedbackList.innerHTML = ''; // Clear the list before adding new items
     
-    const date = new Date(timestamp);
-    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-    
-    feedbackItem.innerHTML = `
-        <h4>${escapeHtml(name)}</h4>
-        <p>${escapeHtml(feedback)}</p>
-        <div class="feedback-date">${formattedDate}</div>
-    `;
-    
-    feedbackList.insertBefore(feedbackItem, feedbackList.firstChild);
+    // Display feedback items up to the current visible count
+    for (let i = 0; i < Math.min(visibleFeedbackCount, allFeedback.length); i++) {
+        const item = allFeedback[i];
+        const feedbackItem = document.createElement('div');
+        feedbackItem.className = 'feedback-item';
+        
+        const date = new Date(item.timestamp);
+        const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        
+        feedbackItem.innerHTML = `
+            <h4>${escapeHtml(item.name)}</h4>
+            <p>${escapeHtml(item.feedback)}</p>
+            <div class="feedback-date">${formattedDate}</div>
+        `;
+        
+        feedbackList.appendChild(feedbackItem);
+    }
+
+    // Add "Show More" button if there are more items to show
+    if (visibleFeedbackCount < allFeedback.length) {
+        const showMoreButton = document.createElement('button');
+        showMoreButton.className = 'show-more-button';
+        showMoreButton.textContent = 'Show More';
+        showMoreButton.onclick = () => {
+            visibleFeedbackCount += feedbacksPerPage;
+            displayFeedbackBatch(allFeedback); // Redisplay with more items
+        };
+        feedbackList.appendChild(showMoreButton);
+    }
 }
 
 // Helper function to escape HTML and prevent XSS
