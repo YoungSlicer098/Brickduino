@@ -2,6 +2,7 @@
   font-family: 'Comic Sans MS', 'Poppins', sans-serif;
   overflow-x: hidden;
   box-sizing: border-box;
+  touch-action: none;
 }
 
 html,
@@ -12,6 +13,8 @@ body {
   padding: 5px;
 
   background-color: #50B8E7;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 
@@ -108,7 +111,7 @@ body {
 }
 
 #closeFlyoutButton {
-  position: absolute;
+  position: fixed;
   top: 50%;
   opacity: 0.6;
   transform: translateY(-50%);
@@ -122,18 +125,21 @@ body {
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 3;
-  transition: all 0.4s ease;
+  z-index: 100;
+  transition: all 0.3s ease;
 }
 
 #closeFlyoutButton:hover {
   background-color: #812b21;
+  opacity: 0.8;
 }
 
 .blocklyFlyout {
-  transition: all 0.5s ease;
-  display: block;
-  z-index: 4;
+  transition: transform 0.3s ease-out !important;
+}
+
+.flyout-transition {
+  transition: transform 0.3s ease-out !important;
 }
 
 .generate-button {
@@ -241,4 +247,20 @@ body {
   font-size: 20px;
   color: #721c24;
   cursor: pointer;
+}
+
+/* Mobile and touch improvements */
+@media (max-width: 786px) {
+
+
+
+
+  /* Improve touch targets */
+  .blocklyTreeRow {
+    min-height: 40px;
+  }
+
+  .blocklyTreeLabel {
+    padding: 8px;
+  }
 }

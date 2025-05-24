@@ -10,10 +10,10 @@
  */
 'use strict';
 
-// goog.provide('Blockly.Arduino');
+goog.provide('Blockly.Arduino');
 
-// goog.require('Blockly.Generator');
-// goog.require('Blockly.StaticTyping');
+goog.require('Blockly.Generator');
+goog.require('Blockly.StaticTyping');
 
 
 /**
@@ -21,11 +21,7 @@
  * @type {!Blockly.Generator}
  */
 Blockly.Arduino = new Blockly.Generator('Arduino');
-// Blockly.Arduino.StaticTyping = new Blockly.StaticTyping();
-Blockly.Arduino.StaticTyping = {
-  collectVarsWithTypes: function(workspace) { return {}; },
-  setProcedureArgs: function(workspace, varsWithTypes) { /* do nothing */ }
-};
+Blockly.Arduino.StaticTyping = new Blockly.StaticTyping();
 
 /**
  * List of illegal variable names.
@@ -36,7 +32,16 @@ Blockly.Arduino.StaticTyping = {
  * @private
  */
 Blockly.Arduino.addReservedWords(
-    'setup_block,loop_block,set_pin_mode,digital_write,digital_read,analog_read,analog_write,pin_dropdown,pin_analog_dropdown,turn_led_on,turn_led_off,custom_led,blink_led,fade_led,delay_ms,delay_seconds,delay_variable,repeat_times,while_true_loop,repeat_until,for_loop_variable,break_loop,continue_loop,declare_variable,set_variable,get_variable,number_value,boolean_value,string_value,math_arithmetic,math_modulo,math_increment,math_minmax,math_map,logic_boolean,logic_compare,logic_operation,logic_negate,control_if,control_else_if,control_else,controls_repeat,controls_switch_case,controls_case,define_function,call_function,define_function_with_params,call_function_with_args,define_function_with_return,return_value');
+    'Blockly,' +  // In case JS is evaled in the current window.
+    'setup,loop,if,else,for,switch,case,while,do,break,continue,return,goto,' +
+    'define,include,HIGH,LOW,INPUT,OUTPUT,INPUT_PULLUP,true,false,integer,' +
+    'constants,floating,point,void,boolean,char,unsigned,byte,int,word,long,' +
+    'float,double,string,String,array,static,volatile,const,sizeof,pinMode,' +
+    'digitalWrite,digitalRead,analogReference,analogRead,analogWrite,tone,' +
+    'noTone,shiftOut,shitIn,pulseIn,millis,micros,delay,delayMicroseconds,' +
+    'min,max,abs,constrain,map,pow,sqrt,sin,cos,tan,randomSeed,random,' +
+    'lowByte,highByte,bitRead,bitWrite,bitSet,bitClear,bit,attachInterrupt,' +
+    'detachInterrupt,interrupts,noInterrupts');
 
 /** Order of operation ENUMs. */
 Blockly.Arduino.ORDER_ATOMIC = 0;         // 0 "" ...

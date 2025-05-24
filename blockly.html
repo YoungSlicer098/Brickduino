@@ -95,6 +95,10 @@
 
     <!-- Workspace Script -->
     <script type="text/javascript">
+        // Add this function at the top
+        function isMobileView() {
+            return window.innerWidth <= 786;
+        }
         // Inject Blockly into #blocklyDiv
         const workspace = Blockly.inject('blocklyDiv', {
             toolbox: '<xml></xml>',
@@ -118,9 +122,64 @@
                 length: 3,
                 colour: '#ccc',
                 snap: true
+            },
+            touch: {
+                drag: true,
+                multitouch: true,
+                handleEvents: true
             }
         });
 
+        // Improve touch handling for mobile
+        if (isMobileView()) {
+            // Handle touch events on the workspace
+            const workspaceDiv = document.getElementById('blocklyDiv');
+            
+            workspaceDiv.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault(); // Prevent zooming
+                }
+            }, { passive: false });
+
+            workspaceDiv.addEventListener('touchmove', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault(); // Prevent scrolling while dragging
+                }
+            }, { passive: false });
+
+            // Add touch handling to the workspace
+            workspace.addChangeListener(function(event) {
+                if (isMobileView()) {
+                    if (event.type == Blockly.Events.BLOCK_DRAG) {
+                        const block = workspace.getBlockById(event.blockId);
+                        if (block) {
+                            if (event.isStart) {
+                                hideFlyout();
+                            } else if (!event.isStart) {
+                                // Force release block on drag end
+                                block.snapToGrid();
+                                if (Blockly.selected === block) {
+                                    Blockly.selected = null;
+                                }
+                            }
+                        }
+                    }
+                    else if (event.type == Blockly.Events.BLOCK_CREATE) {
+                        const block = workspace.getBlockById(event.ids[0]);
+                        if (block) {
+                            // Ensure new blocks are properly positioned and released
+                            setTimeout(() => {
+                                block.snapToGrid();
+                                if (Blockly.selected === block) {
+                                    Blockly.selected = null;
+                                }
+                                hideFlyout();
+                            }, 100);
+                        }
+                    }
+                }
+            });
+        }
 
         function toggleCode(forceClose = false) {
             const sidebar = document.getElementById('codeSidebar');
@@ -206,224 +265,100 @@
             }
         });
 
+        // Block definitions by category
+        const BLOCK_DEFINITIONS = {
+            'Setup': [
+                'set_pin_mode', 'digital_write', 'digital_read', 
+                'analog_read', 'analog_write', 'pin_dropdown', 
+                'pin_analog_dropdown'
+            ],
+            'LED': [
+                'turn_led_on', 'turn_led_off', 'custom_led', 
+                'blink_led', 'fade_led'
+            ],
+            'Wait': [
+                'delay_ms', 'delay_seconds', 'delay_variable'
+            ],
+            'Loops': [
+                'repeat_times', 'while_true_loop', 'repeat_until',
+                'for_loop_variable', 'break_loop', 'continue_loop'
+            ],
+            'Variable': [
+                'declare_variable', 'set_variable', 'get_variable',
+                'number_value', 'boolean_value', 'string_value'
+            ],
+            'Math': [
+                'math_arithmetic', 'math_modulo', 'math_increment',
+                'math_power', 'math_minmax', 'math_map'
+            ],
+            'Logic': [
+                'logic_boolean', 'logic_compare', 'logic_operation',
+                'logic_negate'
+            ],
+            'Control': [
+                'control_if', 'control_else_if', 'control_else',
+                'controls_repeat', 'controls_switch_case', 'controls_case'
+            ],
+            'Function': [
+                'define_function', 'call_function', 'define_function_with_params',
+                'call_function_with_args', 'define_function_with_return', 'return_value'
+            ]
+        };
+
         // Function to create blocks manually
         function showBlocks(category) {
             const xmlList = [];
-
-            if (category == 'Setup') {
-                const block1 = Blockly.utils.xml.createElement('block');
-                block1.setAttribute('type', 'set_pin_mode');
-                xmlList.push(block1);
-
-                const block2 = Blockly.utils.xml.createElement('block');
-                block2.setAttribute('type', 'digital_write');
-                xmlList.push(block2);
-
-                const block3 = Blockly.utils.xml.createElement('block');
-                block3.setAttribute('type', 'digital_read');
-                xmlList.push(block3);
-
-                const block4 = Blockly.utils.xml.createElement('block');
-                block4.setAttribute('type', 'analog_read');
-                xmlList.push(block4);
-
-                const block5 = Blockly.utils.xml.createElement('block');
-                block5.setAttribute('type', 'analog_write');
-                xmlList.push(block5);
-
-                const block6 = Blockly.utils.xml.createElement('block');
-                block6.setAttribute('type', 'pin_dropdown');
-                xmlList.push(block6);
-
-                const block7 = Blockly.utils.xml.createElement('block');
-                block7.setAttribute('type', 'pin_analog_dropdown');
-                xmlList.push(block7);
-            }
-            else if (category == 'LED') {
-                const block1 = Blockly.utils.xml.createElement('block');
-                block1.setAttribute('type', 'turn_led_on');
-                xmlList.push(block1);
-
-                const block2 = Blockly.utils.xml.createElement('block');
-                block2.setAttribute('type', 'turn_led_off');
-                xmlList.push(block2);
-
-                const block3 = Blockly.utils.xml.createElement('block');
-                block3.setAttribute('type', 'custom_led');
-                xmlList.push(block3);
-
-                const block4 = Blockly.utils.xml.createElement('block');
-                block4.setAttribute('type', 'blink_led');
-                xmlList.push(block4);
-
-                const block5 = Blockly.utils.xml.createElement('block');
-                block5.setAttribute('type', 'fade_led');
-                xmlList.push(block5);
-            }
-            else if (category == 'Wait') {
-
-                const block1 = Blockly.utils.xml.createElement('block');
-                block1.setAttribute('type', 'delay_ms');
-                xmlList.push(block1);
-
-                const block2 = Blockly.utils.xml.createElement('block');
-                block2.setAttribute('type', 'delay_seconds');
-                xmlList.push(block2);
-
-                const block3 = Blockly.utils.xml.createElement('block');
-                block3.setAttribute('type', 'delay_variable');
-                xmlList.push(block3);
-
-            }
-            else if (category == 'Loops') {
-                const block1 = Blockly.utils.xml.createElement('block');
-                block1.setAttribute('type', 'repeat_times');
-                xmlList.push(block1);
-
-                const block2 = Blockly.utils.xml.createElement('block');
-                block2.setAttribute('type', 'while_true_loop');
-                xmlList.push(block2);
-
-                const block3 = Blockly.utils.xml.createElement('block');
-                block3.setAttribute('type', 'repeat_until');
-                xmlList.push(block3);
-
-                const block4 = Blockly.utils.xml.createElement('block');
-                block4.setAttribute('type', 'for_loop_variable');
-                xmlList.push(block4);
-
-                const block5 = Blockly.utils.xml.createElement('block');
-                block5.setAttribute('type', 'break_loop');
-                xmlList.push(block5);
-
-                const block6 = Blockly.utils.xml.createElement('block');
-                block6.setAttribute('type', 'continue_loop');
-                xmlList.push(block6);
-            }
-            else if (category == 'Variable') {
-                const block1 = Blockly.utils.xml.createElement('block');
-                block1.setAttribute('type', 'declare_variable');
-                xmlList.push(block1);
-
-                const block2 = Blockly.utils.xml.createElement('block');
-                block2.setAttribute('type', 'set_variable');
-                xmlList.push(block2);
-
-                const block3 = Blockly.utils.xml.createElement('block');
-                block3.setAttribute('type', 'get_variable');
-                xmlList.push(block3);
-
-                const block4 = Blockly.utils.xml.createElement('block');
-                block4.setAttribute('type', 'number_value');
-                xmlList.push(block4);
-
-                const block5 = Blockly.utils.xml.createElement('block');
-                block5.setAttribute('type', 'boolean_value');
-                xmlList.push(block5);
-
-                const block6 = Blockly.utils.xml.createElement('block');
-                block6.setAttribute('type', 'string_value');
-                xmlList.push(block6);
-            }
-            else if (category == 'Math') {
-                const block1 = Blockly.utils.xml.createElement('block');
-                block1.setAttribute('type', 'math_arithmetic');
-                xmlList.push(block1);
-
-                const block2 = Blockly.utils.xml.createElement('block');
-                block2.setAttribute('type', 'math_modulo');
-                xmlList.push(block2);
-
-                const block3 = Blockly.utils.xml.createElement('block');
-                block3.setAttribute('type', 'math_increment');
-                xmlList.push(block3);
-
-                const block4 = Blockly.utils.xml.createElement('block');
-                block4.setAttribute('type', 'math_power');
-                xmlList.push(block4);
-
-                const block5 = Blockly.utils.xml.createElement('block');
-                block5.setAttribute('type', 'math_minmax');
-                xmlList.push(block5);
-
-                const block6 = Blockly.utils.xml.createElement('block');
-                block6.setAttribute('type', 'math_map');
-                xmlList.push(block6);
-            }
-            else if (category == 'Logic') {
-                const block1 = Blockly.utils.xml.createElement('block');
-                block1.setAttribute('type', 'logic_boolean');
-                xmlList.push(block1);
-
-                const block2 = Blockly.utils.xml.createElement('block');
-                block2.setAttribute('type', 'logic_compare');
-                xmlList.push(block2);
-
-                const block3 = Blockly.utils.xml.createElement('block');
-                block3.setAttribute('type', 'logic_operation');
-                xmlList.push(block3);
-
-                const block4 = Blockly.utils.xml.createElement('block');
-                block4.setAttribute('type', 'logic_negate');
-                xmlList.push(block4);
-            }
-            else if (category == 'Control') {
-                const block1 = Blockly.utils.xml.createElement('block');
-                block1.setAttribute('type', 'control_if');
-                xmlList.push(block1);
-
-                const block2 = Blockly.utils.xml.createElement('block');
-                block2.setAttribute('type', 'control_else_if');
-                xmlList.push(block2);
-
-                const block3 = Blockly.utils.xml.createElement('block');
-                block3.setAttribute('type', 'control_else');
-                xmlList.push(block3);
-
-                const block4 = Blockly.utils.xml.createElement('block');
-                block4.setAttribute('type', 'controls_repeat');
-                xmlList.push(block4);
-
-                const block5 = Blockly.utils.xml.createElement('block');
-                block5.setAttribute('type', 'controls_switch_case');
-                xmlList.push(block5);
-
-                const block6 = Blockly.utils.xml.createElement('block');
-                block6.setAttribute('type', 'controls_case');
-                xmlList.push(block6);
-            }
-            else if (category == 'Function') {
-                const block1 = Blockly.utils.xml.createElement('block');
-                block1.setAttribute('type', 'define_function');
-                xmlList.push(block1);
-
-                const block2 = Blockly.utils.xml.createElement('block');
-                block2.setAttribute('type', 'call_function');
-                xmlList.push(block2);
-
-                const block3 = Blockly.utils.xml.createElement('block');
-                block3.setAttribute('type', 'define_function_with_params');
-                xmlList.push(block3);
-
-                const block4 = Blockly.utils.xml.createElement('block');
-                block4.setAttribute('type', 'call_function_with_args');
-                xmlList.push(block4);
-
-                const block5 = Blockly.utils.xml.createElement('block');
-                block5.setAttribute('type', 'define_function_with_return');
-                xmlList.push(block5);
-
-                const block6 = Blockly.utils.xml.createElement('block');
-                block6.setAttribute('type', 'return_value');
-                xmlList.push(block6);
+            
+            if (BLOCK_DEFINITIONS[category]) {
+                BLOCK_DEFINITIONS[category].forEach(blockType => {
+                    const block = Blockly.utils.xml.createElement('block');
+                    block.setAttribute('type', blockType);
+                    xmlList.push(block);
+                });
             }
 
             workspace.getFlyout().show(xmlList);
-
-            // trackFlyoutPosition();
-            setupSmartFlyoutTracking();
             document.getElementById('closeFlyoutButton').style.display = 'block';
-        };
+
+            // Add a small delay to ensure flyout is fully rendered
+            setTimeout(updateCloseButtonPosition, 50);
+
+            // Add mobile-specific handling
+            if (isMobileView()) {
+                const flyout = workspace.getFlyout();
+                const flyoutEl = flyout.svgGroup_;
+
+                if (flyoutEl) {
+                    const blocks = flyoutEl.querySelectorAll('.blocklyDraggable');
+                    blocks.forEach(block => {
+                        // Remove existing listeners to prevent duplicates
+                        block.removeEventListener('touchstart', block.touchStartHandler);
+                        block.removeEventListener('touchend', block.touchEndHandler);
+
+                        // Add touch start handler
+                        block.touchStartHandler = function(e) {
+                            e.preventDefault();
+                            setTimeout(hideFlyout, 300);
+                        };
+
+                        // Add touch end handler
+                        block.touchEndHandler = function(e) {
+                            const touchBlock = Blockly.selected;
+                            if (touchBlock) {
+                                touchBlock.snapToGrid();
+                                // Force deselect the block
+                                Blockly.selected = null;
+                            }
+                        };
+
+                        block.addEventListener('touchstart', block.touchStartHandler, { passive: false });
+                        block.addEventListener('touchend', block.touchEndHandler, { passive: false });
+                    });
+                }
+            }
+
+            setupSmartFlyoutTracking();
+        }
 
 
         let flyoutObserver = null;
@@ -433,61 +368,79 @@
         function hideFlyout() {
             const flyout = workspace.getFlyout();
             const flyoutGroup = workspace.getFlyout().svgGroup_;
-            const closeButton = document.getElementById
-                ('closeFlyoutButton');
+            const closeButton = document.getElementById('closeFlyoutButton');
             const scrollbars = document.getElementsByClassName('blocklyScrollbarHandle');
 
-
             if (flyoutGroup) {
+                // Add transition class for smooth animation
+                flyoutGroup.classList.add('flyout-transition');
                 Array.from(scrollbars).forEach(element => {
                     element.style.display = 'none';
                 });
-                flyoutGroup.style.transition = 'transform 0.3s ease-out';
-                flyoutGroup.style.transform = 'translateX(-300px)'; // Slide left
+
+                // Mobile-specific animation
+                if (isMobileView()) {
+                    flyoutGroup.style.transform = 'translateX(-100%)';
+                } else {
+                    flyoutGroup.style.transform = 'translateX(-300px)';
+                }
+
                 flyoutObserver = null;
                 sidebarResizeObserver = null;
                 isCloseButtonShow = 0;
-                closeButton.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
-                closeButton.style.transform = 'translateX(-100%)';
-                closeButton.style.opacity = '0';
-                setTimeout(() => {
-                }, 300)
+
+                if (closeButton) {
+                    closeButton.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+                    closeButton.style.transform = 'translateX(-100%)';
+                    closeButton.style.opacity = '0';
+                }
+
                 // After animation, actually hide it
                 setTimeout(() => {
                     flyout.hide();
                     flyoutGroup.style.transition = '';
                     flyoutGroup.style.transform = '';
+                    flyoutGroup.classList.remove('flyout-transition');
 
-                    closeButton.style.transition = '';
-                    closeButton.style.transform = '';
-                    closeButton.style.opacity = '0.6';
-                    closeButton.style.display = 'none';
+                    if (closeButton) {
+                        closeButton.style.transition = '';
+                        closeButton.style.transform = '';
+                        closeButton.style.opacity = '0.6';
+                        closeButton.style.display = 'none';
+                    }
                     Array.from(scrollbars).forEach(element => {
                         element.style.display = 'block';
                     });
-                }, 300); // Match the transition time
+                }, 300);
             }
         }
 
-
-        function setupSmartFlyoutTracking() {
-            isCloseButtonShow += 1;
-
+        function updateCloseButtonPosition() {
+            const flyoutCollection = document.getElementsByClassName('blocklyFlyout');
+            const sidebar = document.querySelector('.sidebar-left');
             const closeButton = document.getElementById('closeFlyoutButton');
 
-            if (!closeButton) return;
+            if (flyoutCollection.length > 1 && sidebar && closeButton) {
+                const flyout = flyoutCollection[1];
+                const flyoutRect = flyout.getBoundingClientRect();
+                const sidebarRect = sidebar.getBoundingClientRect();
 
-            // Observe flyout changes
-            observeFlyout();
+                const extraSidebarWidth = sidebarRect.width - 60;
 
-            // Observe sidebar-left width changes
-            observeSidebar();
+                closeButton.style.left = (flyoutRect.right + 10) + 'px';
+                closeButton.style.top = '50%';
+                closeButton.style.transition = 'left 0.3s ease, top 0.3s ease';
+            }
+        }
 
-            // Initial position
-            updateCloseButtonPosition();
-            setTimeout(() => {
+        function setupSmartFlyoutTracking() {
+            const flyoutCollection = document.getElementsByClassName('blocklyFlyout');
+            const sidebar = document.querySelector('.sidebar-left');
+            const closeButton = document.getElementById('closeFlyoutButton');
+
+            if (flyoutCollection.length > 1 && sidebar && closeButton) {
                 updateCloseButtonPosition();
-            }, 300);
+            }
         }
 
         function observeFlyout() {
@@ -532,34 +485,6 @@
             });
         }
 
-        function updateCloseButtonPosition() {
-            const flyoutCollection = document.getElementsByClassName('blocklyFlyout');
-            const sidebar = document.querySelector('.sidebar-left');
-            const closeButton = document.getElementById('closeFlyoutButton');
-
-            if (flyoutCollection.length > 1 && sidebar && closeButton) {
-                const flyout = flyoutCollection[1];
-
-                const flyoutRect = flyout.getBoundingClientRect();
-                const sidebarRect = sidebar.getBoundingClientRect();
-
-                // New smart logic:
-                // Calculate flyout right relative to sidebar growing
-                const extraSidebarWidth = sidebarRect.width - 60; // Assume default is 60px
-                const adjustedFlyoutRight = flyoutRect.right + extraSidebarWidth;
-
-                closeButton.style.left = (flyoutRect.right + 10) + 'px';
-                closeButton.style.top = '50%';
-                closeButton.style.transition = 'left 0.3s ease, top 0.3s ease';
-            }
-        }
-
-
-        workspace.getFlyout().hide()
-
-
-
-
         // Hide Sidebar 2 secs
         let hideFlyoutTimer = null;
 
@@ -586,7 +511,34 @@
             // Add active to clicked one
             element.classList.add('active');
         }
+
+        // Add resize handler for responsive behavior
+        let resizeTimeout;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                if (isMobileView()) {
+                    // Adjust workspace for mobile
+                    workspace.setScale(0.8);
+                } else {
+                    // Reset to desktop scale
+                    workspace.setScale(1.0);
+                }
+            }, 250);
+        });
+
+        // Update position when window is resized
+        window.addEventListener('resize', function() {
+            if (document.getElementById('closeFlyoutButton').style.display === 'block') {
+                updateCloseButtonPosition();
+            }
+        });
+
+        setTimeout(() => {
+            document.getElementById('beta-alert').style.display = 'none'
+        }, 20000)
     </script>
+
 
 
 
