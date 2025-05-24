@@ -45,7 +45,7 @@
         <a onclick="scrollToSection('sevensegment')">🔢 7-Segment</a>
       </nav>
       <div class="install-button">
-        <button onclick="scrollToSection('installIDE')">⬇️ Install IDE</button>
+        <button id="install-button" onclick="scrollToSection('installIDE')">⬇️ Install IDE</button>
       </div>
     </nav>
 
@@ -262,7 +262,7 @@ void loop() {
           <p>2. Double-click the disk image (.dmg) file.</p>
           <p>3. Drag and drop the Arduino IDE application into the Applications folder.</p>
           <p>4. Launch Arduino IDE the same way you would launch any other application (such as ⌘ + Space for Spotlight
-            and search for “Arduino”).</p>
+            and search for "Arduino").</p>
           <br>
           <h4>Linux</h4>
           <p>1. Download the latest release</p>
@@ -319,6 +319,15 @@ void loop() {
         mobileMenu.classList.remove('open');
       });
     });
+    
+    // Close menu when install button is clicked
+    const installButton = mobileMenu.querySelector('#install-button');
+    if (installButton) {
+      installButton.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+      });
+    }
+
   </script>
 </body>
 

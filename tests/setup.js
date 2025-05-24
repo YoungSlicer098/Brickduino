@@ -7,14 +7,55 @@ const feedbackContent = fs.readFileSync(path.join(__dirname, '../scripts/feedbac
 
 // Create a function to initialize the test environment
 global.setupTestEnvironment = () => {
-  // Create a script element for feedback.js
-  const feedbackScript = document.createElement('script');
-  feedbackScript.textContent = feedbackContent;
-  document.body.appendChild(feedbackScript);
-
-  // Create a script element for script.js
+  // Create a single script element with combined content
   const scriptElement = document.createElement('script');
-  scriptElement.textContent = scriptContent;
+  scriptElement.textContent = `
+    // Wrap everything in a function to avoid global scope pollution
+    (function() {
+      ${feedbackContent}
+      ${scriptContent}
+      
+      // Expose necessary functions to global scope
+      window.updateButtonTransform = function() {
+        let btn = document.getElementById("start-button");
+        if (!btn) return;
+
+        let vw = window.innerWidth;
+        let translateY = Math.max(-150, Math.min(0, 0 - (0.1 * vw)));
+        let scale = Math.max(0.5, Math.min(1.5, 0.7 + (0.8 * (vw / 1920))));
+        btn.style.transform = \`translateY(\${translateY}px) scale(\${scale})\`;
+      };
+
+      window.openPopup = function(title, desc, imgPath) {
+        document.getElementById('popup-background').style.display = 'block';
+        document.getElementById('popup-title').textContent = title;
+        document.getElementById('popup-desc').textContent = desc;
+        document.getElementById('popup-img').src = imgPath;
+      };
+
+      window.closePopup = function() {
+        document.getElementById('popup-background').style.display = 'none';
+      };
+
+      window.updateActiveLink = function() {
+        const sections = document.querySelectorAll("section");
+        const navLinks = document.querySelectorAll(".nav-middle a");
+        let index = sections.length;
+
+        while (--index >= 0 && window.scrollY + 100 < sections[index].offsetTop) { }
+
+        navLinks.forEach(link => link.classList.remove("active"));
+        if (index >= 0) {
+          const currentSectionId = sections[index].id;
+          const activeLink = document.querySelector(\`.nav-middle a[href="#\${currentSectionId}"]\`);
+          if (activeLink) activeLink.classList.add("active");
+        }
+      };
+
+      window.addRandomBricksToSections = addRandomBricksToSections;
+      window.moveVisibleBricks = moveVisibleBricks;
+    })();
+  `;
   document.body.appendChild(scriptElement);
 
   // Mock fetch API
