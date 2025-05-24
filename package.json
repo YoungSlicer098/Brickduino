@@ -1,0 +1,19 @@
+{
+  "name": "brickduino",
+  "version": "1.0.0",
+  "description": "Brickduino Testing Suite",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "glob": "^10.3.10",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "puppeteer": "^22.8.3"
+  }
+}

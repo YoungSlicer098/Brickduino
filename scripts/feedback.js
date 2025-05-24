@@ -4,7 +4,12 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby19NIvXrm4iJ_eKfayL
 // Cooldown configuration (in milliseconds)
 const SUBMIT_COOLDOWN = 30000; // 30 seconds cooldown
 const REFRESH_INTERVAL = 10000; // 10 seconds refresh interval
+
+// Global variables
 let lastSubmitTime = 0;
+let visibleFeedbackCount = 5;
+const feedbacksPerPage = 5;
+let refreshInterval = null; // Add this line to store the interval ID
 
 // Input validation configuration
 const MAX_NAME_LENGTH = 50;
@@ -21,13 +26,9 @@ const PROFANITY_LIST = [
     'punyeta', 'hinayupak', 'hayop', 'kingina'
 ];
 
-// Global variable to track how many feedback items are currently shown
-let visibleFeedbackCount = 5;
-const feedbacksPerPage = 5;
-
 // Function to check for profanity
 function containsProfanity(text) {
-    const normalizedText = text.toLowerCase().replace(/[^\w\s]/g, '');
+    const normalizedText = text.toLowerCase().replace(/[^\w\s@]/g, '');
     const words = normalizedText.split(/\s+/);
     
     // Check each word against the profanity list
@@ -79,20 +80,22 @@ function validateInput(name, feedback) {
 async function submitFeedback(event) {
     event.preventDefault();
     
-    const currentTime = Date.now();
-    const timeSinceLastSubmit = currentTime - lastSubmitTime;
-    
-    if (timeSinceLastSubmit < SUBMIT_COOLDOWN) {
-        const remainingTime = Math.ceil((SUBMIT_COOLDOWN - timeSinceLastSubmit) / 1000);
-        alert(`Please wait ${remainingTime} seconds before submitting another feedback.`);
-        return;
-    }
-    
     const submitButton = document.getElementById('submit-feedback');
     const name = document.getElementById('name').value.trim();
     const feedback = document.getElementById('feedbackText').value.trim();
     
     try {
+        // Check cooldown first
+        const currentTime = Date.now();
+        const timeSinceLastSubmit = currentTime - lastSubmitTime;
+        
+        if (timeSinceLastSubmit < SUBMIT_COOLDOWN) {
+            const remainingTime = Math.ceil((SUBMIT_COOLDOWN - timeSinceLastSubmit) / 1000);
+            alert(`Please wait ${remainingTime} seconds before submitting another feedback.`);
+            return;
+        }
+
+        // Then validate input
         validateInput(name, feedback);
         
         submitButton.disabled = true;
@@ -108,6 +111,10 @@ async function submitFeedback(event) {
             body: formData
         });
 
+        if (!response.ok) {
+            throw new Error('Sorry, there was an error submitting your feedback. Please try again.');
+        }
+
         lastSubmitTime = currentTime;
         document.getElementById('feedbackForm').reset();
         
@@ -120,7 +127,7 @@ async function submitFeedback(event) {
         
     } catch (error) {
         console.error('Error:', error);
-        alert(error.message || 'Sorry, there was an error submitting your feedback. Please try again.');
+        alert(error.message);
         submitButton.disabled = false;
     }
 }
@@ -224,6 +231,25 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('feedbackForm').addEventListener('submit', submitFeedback);
     fetchFeedback(); // Initial load of feedback
     
+    // Clear any existing interval
+    if (refreshInterval) {
+        clearInterval(refreshInterval);
+    }
+    
     // Set up periodic refresh of feedback
-    setInterval(fetchFeedback, REFRESH_INTERVAL);
-}); 
+    refreshInterval = setInterval(fetchFeedback, REFRESH_INTERVAL);
+});
+
+// Expose functions and variables to global scope for testing
+if (typeof window !== 'undefined') {
+    window.validateInput = validateInput;
+    window.containsProfanity = containsProfanity;
+    window.submitFeedback = submitFeedback;
+    window.fetchFeedback = fetchFeedback;
+    window.displayFeedbackBatch = displayFeedbackBatch;
+    window.startCooldownTimer = startCooldownTimer;
+    window.escapeHtml = escapeHtml;
+    window.lastSubmitTime = lastSubmitTime;
+    window.SCRIPT_URL = SCRIPT_URL;
+    window.refreshInterval = refreshInterval;
+} 
