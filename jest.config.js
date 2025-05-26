@@ -13,9 +13,9 @@ module.exports = {
   },
   testTimeout: 10000,
   verbose: true,
-  collectCoverage: true,
-  coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov'],
+  // collectCoverage: true,
+  // coverageDirectory: 'coverage',
+  // coverageReporters: ['text', 'lcov'],
   collectCoverageFrom: [
     'scripts/**/*.js',
     '!scripts/vendor/**',
