@@ -95,6 +95,16 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+// Mock getComputedStyle
+Object.defineProperty(window, 'getComputedStyle', {
+  value: () => ({
+    getPropertyValue: prop => {
+      return '';
+    },
+    display: 'none'
+  })
+});
+
 // Mock localStorage
 const localStorageMock = {
   getItem: jest.fn(),
@@ -111,6 +121,40 @@ window.scrollTo = jest.fn();
 window.alert = jest.fn();
 window.confirm = jest.fn();
 window.prompt = jest.fn();
+
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  constructor() {}
+  observe() { return null; }
+  unobserve() { return null; }
+  disconnect() { return null; }
+};
+
+// Mock requestAnimationFrame
+global.requestAnimationFrame = callback => setTimeout(callback, 0);
+global.cancelAnimationFrame = id => clearTimeout(id);
+
+// Mock HTMLElement properties
+Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.getBoundingClientRect = jest.fn(() => ({
+  width: 120,
+  height: 120,
+  top: 0,
+  left: 0,
+  bottom: 0,
+  right: 0,
+}));
+
+// Mock touch events
+document.createEvent = jest.fn((type) => {
+  if (type === 'TouchEvent') {
+    return {
+      initTouchEvent: jest.fn(),
+      touches: []
+    };
+  }
+  return {};
+});
 
 // Add custom matchers
 expect.extend({

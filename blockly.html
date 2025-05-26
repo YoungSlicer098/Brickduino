@@ -308,7 +308,7 @@
         // Function to create blocks manually
         function showBlocks(category) {
             const xmlList = [];
-            
+
             if (BLOCK_DEFINITIONS[category]) {
                 BLOCK_DEFINITIONS[category].forEach(blockType => {
                     const block = Blockly.utils.xml.createElement('block');
@@ -390,9 +390,9 @@
                 isCloseButtonShow = 0;
 
                 if (closeButton) {
-                    closeButton.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
-                    closeButton.style.transform = 'translateX(-100%)';
-                    closeButton.style.opacity = '0';
+                closeButton.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+                closeButton.style.transform = 'translateX(-100%)';
+                closeButton.style.opacity = '0';
                 }
 
                 // After animation, actually hide it
@@ -403,10 +403,10 @@
                     flyoutGroup.classList.remove('flyout-transition');
 
                     if (closeButton) {
-                        closeButton.style.transition = '';
-                        closeButton.style.transform = '';
-                        closeButton.style.opacity = '0.6';
-                        closeButton.style.display = 'none';
+                    closeButton.style.transition = '';
+                    closeButton.style.transform = '';
+                    closeButton.style.opacity = '0.6';
+                    closeButton.style.display = 'none';
                     }
                     Array.from(scrollbars).forEach(element => {
                         element.style.display = 'block';

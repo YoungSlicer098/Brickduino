@@ -444,8 +444,8 @@ describe('JavaScript Functionality Tests', () => {
     beforeEach(() => {
       document.body.innerHTML = `
         <nav class="nav-middle">
-          <a href="#home" onclick="scrollToSection('home')">Home</a>
-          <a href="#about" onclick="scrollToSection('about')">About</a>
+          <a onclick="scrollToSection('home')">Home</a>
+          <a onclick="scrollToSection('about')">About</a>
         </nav>
         <section id="home" style="height: 100px;"></section>
         <section id="about" style="height: 100px;"></section>
@@ -459,7 +459,7 @@ describe('JavaScript Functionality Tests', () => {
         // Always set home as active when at the top
         if (window.scrollY === 0) {
           navLinks.forEach(link => link.classList.remove("active"));
-          const homeLink = document.querySelector('a[href="#home"]');
+          const homeLink = document.querySelector('a[onclick="scrollToSection(\'home\')"]');
           if (homeLink) homeLink.classList.add("active");
           return;
         }
@@ -468,7 +468,8 @@ describe('JavaScript Functionality Tests', () => {
         let currentSection = null;
         for (let i = 0; i < sections.length; i++) {
           const section = sections[i];
-          if (section.offsetTop <= window.scrollY + 100) {
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= 100) {
             currentSection = section;
           }
         }
@@ -476,26 +477,32 @@ describe('JavaScript Functionality Tests', () => {
         // Update active link
         navLinks.forEach(link => link.classList.remove("active"));
         if (currentSection) {
-          const activeLink = document.querySelector('.nav-middle a[href="#' + currentSection.id + '"]');
+          const activeLink = document.querySelector(`.nav-middle a[onclick="scrollToSection('${currentSection.id}')"]`);
           if (activeLink) activeLink.classList.add("active");
         }
       };
 
-      // Mock window.scrollY and offsetTop
+      // Mock window.scrollY
       Object.defineProperty(window, 'scrollY', {
         configurable: true,
         value: 0
       });
 
+      // Mock getBoundingClientRect for sections
       const sections = document.querySelectorAll('section');
-      sections[0].offsetTop = 0;
-      sections[1].offsetTop = 200;
+      sections.forEach((section, index) => {
+        section.getBoundingClientRect = jest.fn().mockReturnValue({
+          top: index === 0 ? 0 : 200,
+          bottom: index === 0 ? 100 : 300,
+          height: 100
+        });
+      });
     });
 
     test('updateActiveLink updates active link based on scroll position', () => {
       window.updateActiveLink();
-      const homeLink = document.querySelector('a[href="#home"]');
-      const aboutLink = document.querySelector('a[href="#about"]');
+      const homeLink = document.querySelector('a[onclick="scrollToSection(\'home\')"]');
+      const aboutLink = document.querySelector('a[onclick="scrollToSection(\'about\')"]');
       expect(homeLink.classList.contains('active')).toBe(true);
       expect(aboutLink.classList.contains('active')).toBe(false);
     });

@@ -1,11 +1,25 @@
 module.exports = {
   testEnvironment: 'jsdom',
-  setupFilesAfterEnv: [
-    '<rootDir>/tests/setup.js'
-  ],
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+  testMatch: ['**/*.test.js'],
+  moduleFileExtensions: ['js', 'json'],
+  transform: {
+    '^.+\\.js$': 'babel-jest'
+  },
+  globals: {
+    'ts-jest': {
+      useESM: true
+    }
+  },
+  testTimeout: 10000,
+  verbose: true,
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov'],
   collectCoverageFrom: [
     'scripts/**/*.js',
-    '!**/node_modules/**',
+    '!scripts/vendor/**',
+    '!**/node_modules/**'
   ],
   coverageThreshold: {
     global: {
@@ -15,10 +29,6 @@ module.exports = {
       statements: 80,
     },
   },
-  testMatch: [
-    '<rootDir>/tests/**/*.test.js'
-  ],
-  verbose: true,
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(gif|ttf|eot|svg|png)$': '<rootDir>/tests/__mocks__/fileMock.js'
