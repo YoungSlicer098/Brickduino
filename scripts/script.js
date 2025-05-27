@@ -312,7 +312,7 @@ const navLinks = document.querySelectorAll(".nav-middle a");
 function updateActiveLink() {
     let index = sections.length;
 
-    while (--index >= 0 && window.scrollY + 100 < sections[index].offsetTop) { }
+    while (--index >= 0 && window.scrollY + 200 < sections[index].offsetTop) { }
 
     navLinks.forEach(link => link.classList.remove("active"));
     if (index >= 0) {
